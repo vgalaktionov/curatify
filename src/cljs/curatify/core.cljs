@@ -9,7 +9,7 @@
             [secretary.core :as secretary :include-macros true])
   (:import goog.History))
 
-(defonce session (r/atom {:page :home}))
+(defonce session (r/atom {:page :home :user {}}))
 
 ; the navbar components are implemented via baking-soda [1]
 ; library that provides a ClojureScript interface for Reactstrap [2]
@@ -45,7 +45,13 @@
 (defn home-page []
   [:div.container-fluid.text-center
    [:h1.display-1 "Welcome to Curatify!"]
-   [:a.btn.btn-outline-primary {:href "/auth/login"} "Login with Spotify"]])
+   (if (not-empty (:user @session))
+     [:div
+      [:p (str "Hello, " (get-in @session [:user :display_name]))]
+      [:a.btn.btn-outline-secondary {:href "/auth/logout"
+                                     :on-click #(swap! session dissoc :user)}
+                                    "Logout"]]
+     [:a.btn.btn-outline-primary {:href "/auth/login"} "Login with Spotify"])])
 
 (def pages
   {:home #'home-page
@@ -81,6 +87,9 @@
 (defn fetch-docs! []
   (GET "/docs" {:handler #(swap! session assoc :docs %)}))
 
+(defn fetch-user! []
+  (GET "/auth/me" {:handler #(swap! session assoc :user (:body %))}))
+
 (defn mount-components []
   (r/render [#'navbar] (.getElementById js/document "navbar"))
   (r/render [#'page] (.getElementById js/document "app")))
@@ -88,5 +97,7 @@
 (defn init! []
   (ajax/load-interceptors!)
   (fetch-docs!)
+  (fetch-user!)
   (hook-browser-navigation!)
-  (mount-components))
+  (mount-components)
+  (.log js/console session))

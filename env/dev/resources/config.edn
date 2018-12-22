@@ -1,3 +1,5 @@
 {:spotify {:client-id "cad353b0c95a4f819d47426cd782ec3b"
            :client-secret "f85c4b1ac0444ee8ae9a604c39fb85ca"
-           :redirect-uri "http://curatify.localhost:3000/auth/callback"}}
+           :redirect-uri "http://curatify.localhost:3000/auth/callback"}
+ :database-url "jdbc:postgresql://localhost:5432/curatify?user=postgres"
+ :secret-key "81>HVn31FroY4M8@"}
