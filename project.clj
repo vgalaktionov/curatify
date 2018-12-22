@@ -6,6 +6,7 @@
   :dependencies [[baking-soda "0.2.0" :exclusions [cljsjs/react-bootstrap]]
                  [cheshire "5.8.1"]
                  [clj-commons/secretary "1.2.4"]
+                 [clj-http "3.9.1"]
                  [cljs-ajax "0.8.0"]
                  [cljsjs/react-popper "0.10.4-0"]
                  [cljsjs/react-transition-group "2.4.0-0"]

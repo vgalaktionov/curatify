@@ -43,11 +43,9 @@
      [:img {:src "/img/warning_clojure.png"}]]]])
 
 (defn home-page []
-  [:div.container
-   (when-let [docs (:docs @session)]
-     [:div.row>div.col-sm-12
-      [:div {:dangerouslySetInnerHTML
-             {:__html (md->html docs)}}]])])
+  [:div.container-fluid.text-center
+   [:h1.display-1 "Welcome to Curatify!"]
+   [:a.btn.btn-outline-primary {:href "/auth/login"} "Login with Spotify"]])
 
 (def pages
   {:home #'home-page
