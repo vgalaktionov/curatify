@@ -11,12 +11,9 @@
 
 
 (defn callback [{:keys [params session]}]
-  (let [code (:code params)
-        token (spotify/get-token code)
-        user (spotify/me token)]
-    (-> user
-      (assoc :token token)
-      (db/upsert-user!))
+  (let [token (spotify/get-token (:code params))
+        user (assoc (spotify/me token) :token token)]
+    (db/upsert-user! user)
     (-> (response/found "/")
         (assoc :session (assoc session :user user)))))
 
