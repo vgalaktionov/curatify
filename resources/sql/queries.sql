@@ -46,3 +46,18 @@ insert into playlists_tracks
 (track_id, playlist_id)
 values :t*:playlist-tracks
 on conflict (track_id, playlist_id) do nothing;
+
+-- :name insert-artists! :! :n
+-- :doc inserts or updates multiple artists
+insert into artists
+(id, name, images)
+values :t*:artists
+on conflict (id) do nothing;
+
+
+-- :name insert-artist-tracks! :! :n
+-- :doc inserts or updates multiple tracks
+insert into artists_tracks
+(track_id, artist_id)
+values :t*:artist-tracks
+on conflict (track_id, artist_id) do nothing;

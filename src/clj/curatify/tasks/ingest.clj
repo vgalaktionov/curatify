@@ -11,6 +11,23 @@
        (db/upsert-playlists!)))
 
 
+(defn ingest-track-artists [tracks]
+  (->> tracks
+       (map :artists)
+       (flatten)
+       (distinct)
+       (map (fn [{:keys [id name images]}] [id name images]))
+       (assoc {} :artists)
+       (db/insert-artists!))
+  (->> tracks
+       (map (fn [{:keys [artists id]}]
+              (for [artist artists]
+                [id (:id artist)])))
+       (mapcat identity) ; flatten 1 level
+       (assoc {} :artist-tracks)
+       (db/insert-artist-tracks!)))
+
+
 (defn ingest-user-playlist-tracks [{user-id :id token :token}]
   (doseq [playlist-id (map :id (db/get-user-playlist-ids {:id user-id}))]
     (let [tracks (->> (spotify/playlist-tracks playlist-id token)
@@ -24,7 +41,8 @@
       (->> tracks
            (map (fn [{id :id}] [id playlist-id]))
            (assoc {} :playlist-tracks)
-           (db/insert-playlist-tracks!)))))
+           (db/insert-playlist-tracks!))
+      (ingest-track-artists tracks))))
 
 
 (defn ingest-for-user [user]
