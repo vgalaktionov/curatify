@@ -27,6 +27,11 @@ on conflict (id) do update set
 select id from playlists where user_id = :id;
 
 
+-- :name get-playlist-ids :? :*
+-- :doc retrieves playlist ids
+select id from playlists;
+
+
 -- :name upsert-tracks! :! :n
 -- :doc inserts or updates multiple tracks
 insert into tracks
@@ -77,14 +82,27 @@ on conflict (id) do update set
     genres = EXCLUDED.genres,
     images = EXCLUDED.images;
 
+
 -- :name playlist-artist-affinity :? :*
 -- :doc retrieves artist counts for playlist id
 select art.artist_id, count(art.track_id), a.name from artists a
-inner join artists_tracks art on art.artist_id = a.id
-inner join playlists_tracks pt on pt.track_id = art.track_id
-inner join playlists p on pt.playlist_id = p.id
+  inner join artists_tracks art on art.artist_id = a.id
+  inner join playlists_tracks pt on pt.track_id = art.track_id
+  inner join playlists p on pt.playlist_id = p.id
 where p.id = :playlist-id
 group by a.name, art.artist_id;
+
+
+-- :name playlist-genre-affinity :? :*
+-- :doc retrieves genre counts for playlist id
+select genre, count(*) from (
+  select jsonb_array_elements_text(a.genres) as genre from artists a
+    inner join artists_tracks art on art.artist_id = a.id
+    inner join playlists_tracks pt on pt.track_id = art.track_id
+    inner join playlists p on pt.playlist_id = p.id
+  where p.id = :playlist-id
+) temp
+group by temp.genre;
 
 
 -- :name playlist-track-count :? :1
@@ -95,3 +113,8 @@ select count(*) from playlists_tracks where playlist_id = :playlist-id;
 -- :name update-artist-affinities! :! :n
 -- :doc updates affinities for playlist
 update playlists set artist_affinities = :aa where id = :playlist-id;
+
+
+-- :name update-genre-affinities! :! :n
+-- :doc updates affinities for playlist
+update playlists set genre_affinities = :ga where id = :playlist-id;
