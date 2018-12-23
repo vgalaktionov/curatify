@@ -7,7 +7,7 @@
 
 
 (defn login []
-  (response/found spotify/auth-url))
+  (response/found (spotify/auth-url)))
 
 
 (defn callback [{:keys [params session]}]
@@ -30,7 +30,7 @@
 
 
 (defroutes auth-routes
-  (GET "/auth/login" req (login))
+  (GET "/auth/login" [] (login))
   (GET "/auth/callback" req (callback req))
   (GET "/auth/logout" [] (logout))
   (GET "/auth/me" req (me req)))
