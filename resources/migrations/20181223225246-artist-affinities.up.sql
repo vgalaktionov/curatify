@@ -1,0 +1,1 @@
+alter table playlists add column artist_affinities jsonb;

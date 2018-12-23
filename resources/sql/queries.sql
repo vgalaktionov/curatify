@@ -76,3 +76,22 @@ values :t*:artists
 on conflict (id) do update set
     genres = EXCLUDED.genres,
     images = EXCLUDED.images;
+
+-- :name playlist-artist-affinity :? :*
+-- :doc retrieves artist counts for playlist id
+select art.artist_id, count(art.track_id), a.name from artists a
+inner join artists_tracks art on art.artist_id = a.id
+inner join playlists_tracks pt on pt.track_id = art.track_id
+inner join playlists p on pt.playlist_id = p.id
+where p.id = :playlist-id
+group by a.name, art.artist_id;
+
+
+-- :name playlist-track-count :? :1
+-- :doc retrieves playlist count
+select count(*) from playlists_tracks where playlist_id = :playlist-id;
+
+
+-- :name update-artist-affinities! :! :n
+-- :doc updates affinities for playlist
+update playlists set artist_affinities = :aa where id = :playlist-id;

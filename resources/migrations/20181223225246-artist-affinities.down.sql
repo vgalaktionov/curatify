@@ -1,0 +1,1 @@
+alter table playlists drop column artist_affinities;
