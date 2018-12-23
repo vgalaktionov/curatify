@@ -50,7 +50,7 @@ on conflict (track_id, playlist_id) do nothing;
 -- :name insert-artists! :! :n
 -- :doc inserts or updates multiple artists
 insert into artists
-(id, name, images)
+(id, name)
 values :t*:artists
 on conflict (id) do nothing;
 
@@ -61,3 +61,18 @@ insert into artists_tracks
 (track_id, artist_id)
 values :t*:artist-tracks
 on conflict (track_id, artist_id) do nothing;
+
+
+-- :name get-artist-ids :? :*
+-- :doc retrieves all artist ids
+select id from artists;
+
+
+-- :name enrich-artists! :! :n
+-- :doc updates artist with images & genres
+insert into artists
+(id, images, genres)
+values :t*:artists
+on conflict (id) do update set
+    genres = EXCLUDED.genres,
+    images = EXCLUDED.images;

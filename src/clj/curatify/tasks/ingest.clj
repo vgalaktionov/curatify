@@ -16,7 +16,7 @@
        (map :artists)
        (flatten)
        (distinct)
-       (map (fn [{:keys [id name images]}] [id name images]))
+       (map (fn [{:keys [id name]}] [id name]))
        (assoc {} :artists)
        (db/insert-artists!))
   (->> tracks
@@ -45,11 +45,26 @@
       (ingest-track-artists tracks))))
 
 
+(defn ingest-artist-details []
+  (let [artist-chunks (->> (db/get-artist-ids)
+                           (map :id)
+                           (partition 50))]
+       (doseq [ac artist-chunks]
+         (->> (spotify/artists ac)
+              (map (fn [{:keys [id images genres]}] [id images genres]))
+              (assoc {} :artists)
+              (db/enrich-artists!)))))
+
+
 (defn ingest-for-user [user]
   (ingest-user-playlists user)
   (ingest-user-playlist-tracks user))
 
 
 (defn ingest-all []
+  (println "ingesting for all users...")
   (doseq [user (db/get-user-ids-and-tokens)]
-    (time (ingest-for-user user))))
+    (println (str "ingesting for user " (:id user) "..."))
+    (time (ingest-for-user user)))
+  (println "enriching artist data...")
+  (time (ingest-artist-details)))
