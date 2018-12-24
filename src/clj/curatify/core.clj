@@ -6,7 +6,8 @@
             [curatify.config :refer [env]]
             [clojure.tools.cli :refer [parse-opts]]
             [clojure.tools.logging :as log]
-            [mount.core :as mount])
+            [mount.core :as mount]
+            [curatify.tasks.core])
   (:gen-class))
 
 (def cli-options

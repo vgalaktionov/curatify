@@ -1,5 +1,6 @@
 (ns curatify.tasks.analyze
-  (:require [curatify.db.core :as db]))
+  (:require [curatify.db.core :as db]
+            [clojure.tools.logging :as log]))
 
 (defn playlist-affinities [playlist-id]
   (let  [artist-affinities (db/playlist-artist-affinity {:playlist-id playlist-id})
@@ -23,6 +24,6 @@
 
 
 (defn analyze-all []
-  (println "Analyzing all playlist affinities")
-  (time (doseq [playlist-id (map :id (db/get-playlist-ids))]
-          (playlist-affinities playlist-id))))
+  (log/info "Analyzing all playlist affinities")
+  (log/info (with-out-str (time (doseq [playlist-id (map :id (db/get-playlist-ids))]
+                                  (playlist-affinities playlist-id))))))

@@ -65,9 +65,9 @@
 
 
 (defn ingest-all []
-  (println "ingesting for all users...")
+  (log/info "ingesting for all users...")
   (doseq [user (db/get-user-ids-and-tokens)]
-    (println (str "ingesting for user " (:id user) "..."))
-    (time (ingest-for-user user)))
-  (println "enriching artist data...")
-  (time (ingest-artist-details)))
+    (log/info (str "ingesting for user " (:id user) "..."))
+    (log/info (with-out-str (time (ingest-for-user user)))))
+  (log/info "enriching artist data...")
+  (log/info (with-out-str (time (ingest-artist-details)))))

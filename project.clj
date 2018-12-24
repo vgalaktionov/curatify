@@ -30,6 +30,7 @@
                  [org.clojure/clojurescript "1.10.439" :scope "provided"]
                  [org.clojure/tools.cli "0.4.1"]
                  [org.clojure/tools.logging "0.4.1"]
+                 [org.immutant/scheduling "2.1.10"]
                  [org.postgresql/postgresql "42.2.5"]
                  [org.webjars.bower/tether "1.4.4"]
                  [org.webjars/bootstrap "4.1.3"]

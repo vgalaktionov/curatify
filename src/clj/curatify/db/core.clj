@@ -14,6 +14,8 @@
            [java.sql
             BatchUpdateException
             PreparedStatement]))
+
+
 (defstate ^:dynamic *db*
   :start (if-let [jdbc-url (env :database-url)]
            (conman/connect! {:jdbc-url jdbc-url})
