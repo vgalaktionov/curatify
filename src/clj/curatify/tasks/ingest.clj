@@ -1,7 +1,8 @@
 (ns curatify.tasks.ingest
   (:require [curatify.db.core :as db]
             [curatify.spotify :as spotify]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [clojure.core.async :as async]))
 
 
 (defn ingest-user-playlists [{user-id :id token :token}]
@@ -49,11 +50,12 @@
   (let [artist-chunks (->> (db/get-artist-ids)
                            (map :id)
                            (partition 50))]
-       (doseq [ac artist-chunks]
-         (->> (spotify/artists ac)
-              (map (fn [{:keys [id images genres]}] [id images genres]))
-              (assoc {} :artists)
-              (db/enrich-artists!)))))
+       (doall (pmap
+                (fn [ac] (->> (spotify/artists ac)
+                              (map (fn [{:keys [id images genres]}] [id images genres]))
+                              (assoc {} :artists)
+                              (db/enrich-artists!)))
+                artist-chunks))))
 
 
 (defn ingest-for-user [user]
