@@ -118,3 +118,15 @@ update playlists set artist_affinities = :aa where id = :playlist-id;
 -- :name update-genre-affinities! :! :n
 -- :doc updates affinities for playlist
 update playlists set genre_affinities = :ga where id = :playlist-id;
+
+
+-- :name update-inbox! :! :n
+-- :doc puts tracks from inbox-marked playlists into the inbox table
+insert into inbox
+(user_id, track_id)
+select p.user_id, pt.track_id
+from playlists_tracks pt
+inner join playlists p on p.id = pt.playlist_id
+where p.user_id = :id
+and p.inbox = true
+on conflict (user_id, track_id) do nothing;

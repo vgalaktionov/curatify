@@ -58,7 +58,8 @@
 
 (defn ingest-for-user [user]
   (ingest-user-playlists user)
-  (ingest-user-playlist-tracks user))
+  (ingest-user-playlist-tracks user)
+  (db/update-inbox! user))
 
 
 (defn ingest-all []
