@@ -28,14 +28,18 @@
                      :scope "user-read-email user-library-read user-library-modify"})))
 
 
+(defn enrich-token [token]
+  (assoc token :expires-at (+ (:expires_in token)
+                              (quot (System/currentTimeMillis) 1000))))
+
 (defn get-token [code]
-  (:body (client/post (str accounts "/api/token")
-                      {:form-params {:grant_type "authorization_code"
-                                     :code code
-                                     :redirect_uri (redirect-uri)
-                                     :client_id (client-id)
-                                     :client_secret (client-secret)}
-                       :as :json})))
+  (enrich-token (:body (client/post (str accounts "/api/token")
+                                    {:form-params {:grant_type "authorization_code"
+                                                   :code code
+                                                   :redirect_uri (redirect-uri)
+                                                   :client_id (client-id)
+                                                   :client_secret (client-secret)}
+                                     :as :json}))))
 
 
 (defn get-generic-token []
@@ -44,6 +48,15 @@
                                    :client_id (client-id)
                                    :client_secret (client-secret)}
                      :as :json})))
+
+
+(defn refresh-token [{token :refresh_token}]
+  (enrich-token (:body (client/post (str accounts "/api/token")
+                                {:form-params {:grant_type "refresh_token"
+                                               :client_id (client-id)
+                                               :client_secret (client-secret)
+                                               :refresh_token token}
+                                 :as :json}))))
 
 
 (defn me [{access :access_token}]

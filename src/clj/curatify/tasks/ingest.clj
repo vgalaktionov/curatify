@@ -5,11 +5,27 @@
             [clojure.core.async :as async]))
 
 
-(defn ingest-user-playlists [{user-id :id token :token}]
+(defn expiring? [token]
+  (> (quot (System/currentTimeMillis) 1000)
+     (- 60 (:expires-at token))))
+
+
+(defn update-user-token [{token :token :as user}]
+  (if (expiring? token)
+    (let [user (->> (spotify/refresh-token token)
+                    (merge token)
+                    (assoc user :token))]
+      (db/upsert-user! user)
+      user)
+    user))
+
+
+(defn ingest-user-playlists [{user-id :id token :token :as user}]
   (->> (spotify/me-playlists token)
        (map (fn [{:keys [id name images]}] [id user-id name false images]))
        (assoc {} :playlists)
-       (db/upsert-playlists!)))
+       (db/upsert-playlists!))
+  user)
 
 
 (defn ingest-track-artists [tracks]
@@ -29,7 +45,7 @@
        (db/insert-artist-tracks!)))
 
 
-(defn ingest-user-playlist-tracks [{user-id :id token :token}]
+(defn ingest-user-playlist-tracks [{user-id :id token :token :as user}]
   (doseq [playlist-id (map :id (db/get-user-playlist-ids {:id user-id}))]
     (let [tracks (->> (spotify/playlist-tracks playlist-id token)
                       (map :track)
@@ -43,7 +59,8 @@
            (map (fn [{id :id}] [id playlist-id]))
            (assoc {} :playlist-tracks)
            (db/insert-playlist-tracks!))
-      (ingest-track-artists tracks))))
+      (ingest-track-artists tracks)))
+  user)
 
 
 (defn ingest-artist-details []
@@ -59,14 +76,15 @@
 
 
 (defn ingest-for-user [user]
-  (ingest-user-playlists user)
-  (ingest-user-playlist-tracks user)
-  (db/update-inbox! user))
+  (-> (update-user-token user)
+      (ingest-user-playlists)
+      (ingest-user-playlist-tracks)
+      (db/update-inbox!)))
 
 
 (defn ingest-all []
   (log/info "ingesting for all users...")
-  (doseq [user (db/get-user-ids-and-tokens)]
+  (doseq [user (db/get-users)]
     (log/info (str "ingesting for user " (:id user) "..."))
     (log/info (with-out-str (time (ingest-for-user user)))))
   (log/info "enriching artist data...")

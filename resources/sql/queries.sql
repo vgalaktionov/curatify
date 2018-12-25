@@ -8,9 +8,11 @@ ON CONFLICT (id) DO UPDATE SET
     email = EXCLUDED.email,
     token = EXCLUDED.token;
 
--- :name get-user-ids-and-tokens :? :*
--- :doc retrieves all spotify tokens
-SELECT id, token FROM users;
+
+-- :name get-users :? :*
+-- :doc retrieves all users
+SELECT * FROM users;
+
 
 -- :name upsert-playlists! :! :n
 -- :doc inserts or updates multiple playlists
