@@ -9,7 +9,7 @@
             [secretary.core :as secretary :include-macros true])
   (:import goog.History))
 
-(defonce session (r/atom {:page :home :user {}}))
+(defonce session (r/atom {:page :home :user {} :inbox []}))
 
 ; the navbar components are implemented via baking-soda [1]
 ; library that provides a ClojureScript interface for Reactstrap [2]
@@ -84,11 +84,12 @@
 
 ;; -------------------------
 ;; Initialize app
-(defn fetch-docs! []
-  (GET "/docs" {:handler #(swap! session assoc :docs %)}))
 
 (defn fetch-user! []
   (GET "/auth/me" {:handler #(swap! session assoc :user (:body %))}))
+
+(defn fetch-inbox! []
+  (GET "/api/inbox" {:handler #(swap! session assoc :inbox (:body %))}))
 
 (defn mount-components []
   (r/render [#'navbar] (.getElementById js/document "navbar"))
@@ -96,8 +97,8 @@
 
 (defn init! []
   (ajax/load-interceptors!)
-  (fetch-docs!)
   (fetch-user!)
+  (fetch-inbox!)
   (hook-browser-navigation!)
   (mount-components)
   (.log js/console session))

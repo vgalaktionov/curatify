@@ -3,6 +3,7 @@
             [curatify.layout :refer [error-page]]
             [curatify.routes.home :refer [home-routes]]
             [curatify.routes.auth :refer [auth-routes]]
+            [curatify.routes.api :refer [api-routes]]
             [compojure.core :refer [routes wrap-routes]]
             [ring.util.http-response :as response]
             [compojure.route :as route]
@@ -21,6 +22,9 @@
           (wrap-routes middleware/wrap-csrf)
           (wrap-routes middleware/wrap-formats))
       (-> #'auth-routes
+          (wrap-routes middleware/wrap-csrf)
+          (wrap-routes middleware/wrap-formats))
+      (-> #'api-routes
           (wrap-routes middleware/wrap-csrf)
           (wrap-routes middleware/wrap-formats))
       (route/not-found

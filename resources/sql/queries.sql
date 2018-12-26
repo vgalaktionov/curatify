@@ -132,3 +132,10 @@ inner join playlists p on p.id = pt.playlist_id
 where p.user_id = :id
 and p.inbox = true
 on conflict (user_id, track_id) do nothing;
+
+
+-- :name get-user-inbox :? :*
+-- :doc puts tracks from inbox-marked playlists into the inbox table
+select t.id, t.name from inbox i
+inner join tracks t on t.id = i.track_id
+where i.user_id = :id;

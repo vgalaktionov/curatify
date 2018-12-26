@@ -46,7 +46,7 @@
   (-> ((:middleware defaults) handler)
       wrap-webjars
       wrap-flash
-      (wrap-session {:cookie-attrs {:http-only true}})
+      (wrap-session {:cookie-attrs {:http-only true :path "/"}})
       (wrap-defaults
         (-> site-defaults
             (assoc-in [:security :anti-forgery] false)
