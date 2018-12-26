@@ -1,6 +1,5 @@
 (ns curatify.core
-  (:require [baking-soda.core :as b]
-            [reagent.core :as r]
+  (:require [reagent.core :as r]
             [goog.events :as events]
             [goog.history.EventType :as HistoryEventType]
             [markdown.core :refer [md->html]]
@@ -9,32 +8,50 @@
             [secretary.core :as secretary :include-macros true])
   (:import goog.History))
 
+
 (defonce session (r/atom {:page :home :user {} :inbox []}))
 
-; the navbar components are implemented via baking-soda [1]
-; library that provides a ClojureScript interface for Reactstrap [2]
-; Bootstrap 4 components.
-; [1] https://github.com/gadfly361/baking-soda
-; [2] http://reactstrap.github.io/
+
+(defn authenticated? []
+  (not-empty (:user @session)))
+
 
 (defn nav-link [uri title page]
-  [b/NavItem
-   [b/NavLink
-    {:href   uri
-     :active (when (= page (:page @session)) "active")}
-    title]])
+  [:a.navbar-item {:href uri :class (when (= page (:page @session)) "is-active")} title])
+
+
+(defn login-button []
+  [:div.navbar-item
+   [:a.button.is-spotify {:href "/auth/login"}
+    [:span.icon
+     [:i.fab.fa-spotify]]
+    [:span "Login with Spotify"]]])
+
+
+(defn logout-button []
+  [:div.navbar-item
+   [:a.button.is-primary.is-inverted.is-outlined {:href "/auth/logout"
+                                                  :on-click #(swap! session dissoc :user)}
+    "Logout"]])
+
 
 (defn navbar []
-  (r/with-let [expanded? (r/atom true)]
-    [b/Navbar {:light true
-               :class-name "navbar-dark bg-primary"
-               :expand "md"}
-     [b/NavbarBrand {:href "/"} "curatify"]
-     [b/NavbarToggler {:on-click #(swap! expanded? not)}]
-     [b/Collapse {:is-open @expanded? :navbar true}
-      [b/Nav {:class-name "mr-auto" :navbar true}
-       [nav-link "#/" "Home" :home]
-       [nav-link "#/about" "About" :about]]]]))
+  [:nav.navbar
+   [:div.navbar-brand
+    [:a.navbar-item.is-logo {:href "/"}
+     [:img {:src "/img/logo_transparent.png" :width 150}]]]
+   [:div.navbar-menu
+    [:div.navbar-start
+     [nav-link "#/" "Home" :home]
+     [nav-link "#/about" "About" :about]]
+    [:div.navbar-end
+
+     (if (authenticated?)
+       [:<>
+        [:div.navbar-item (str "Welcome, " (get-in @session [:user :display_name]))]
+        [logout-button]]
+       [login-button])]]])
+
 
 (defn about-page []
   [:div.container
@@ -42,20 +59,24 @@
     [:div.col-md-12
      [:img {:src "/img/warning_clojure.png"}]]]])
 
+
+(defn inbox-list []
+  [:nav.panel
+   [:p.panel-heading "Inbox tracks"]
+   (map (fn [item] ^{:key (:id item)} [:a.panel-block (:name item)]) (:inbox @session))])
+
+
 (defn home-page []
-  [:div.container-fluid.text-center
-   [:h1.display-1 "Welcome to Curatify!"]
-   (if (not-empty (:user @session))
-     [:div
-      [:p (str "Hello, " (get-in @session [:user :display_name]))]
-      [:a.btn.btn-outline-secondary {:href "/auth/logout"
-                                     :on-click #(swap! session dissoc :user)}
-                                    "Logout"]]
-     [:a.btn.btn-outline-primary {:href "/auth/login"} "Login with Spotify"])])
+  [:section.section
+   [:div.container.text-center
+    (if (authenticated?)
+      [inbox-list])]])
+
 
 (def pages
   {:home #'home-page
    :about #'about-page})
+
 
 (defn page []
   [(pages (:page @session))])

@@ -3,14 +3,13 @@
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
 
-  :dependencies [[baking-soda "0.2.0" :exclusions [cljsjs/react-bootstrap]]
-                 [buddy "2.0.0"]
+  :dependencies [[buddy "2.0.0"]
                  [cheshire "5.8.1"]
                  [clj-commons/secretary "1.2.4"]
                  [clj-http "3.9.1"]
                  [cljs-ajax "0.8.0"]
-                 [cljsjs/react-popper "0.10.4-0"]
-                 [cljsjs/react-transition-group "2.4.0-0"]
+                 ;[cljsjs/react-popper "0.10.4-0"]
+                 ;[cljsjs/react-transition-group "2.4.0-0"]
                  [clojure.java-time "0.3.2"]
                  [com.cognitect/transit-clj "0.8.313"]
                  [compojure "1.6.1"]
@@ -33,8 +32,8 @@
                  [org.clojure/tools.logging "0.4.1"]
                  [org.immutant/scheduling "2.1.10"]
                  [org.postgresql/postgresql "42.2.5"]
-                 [org.webjars.bower/tether "1.4.4"]
-                 [org.webjars/bootstrap "4.1.3"]
+                 [org.webjars.npm/bulma "0.7.2"]
+                 [org.webjars.npm/bulmaswatch "0.6.1"]
                  [org.webjars/font-awesome "5.5.0"]
                  [org.webjars/webjars-locator "0.34"]
                  [reagent "0.8.1"]

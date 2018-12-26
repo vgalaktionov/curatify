@@ -1,9 +1,33 @@
 html,
 body {
-	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	/*font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
     height: 100%;
 }
 nav {
-    margin-bottom: 20px;
+    /*margin-bottom: 20px;*/
+    height: 120px;
 }
 
+.navbar img {
+    max-height: 200px;
+}
+
+.navbar-item.is-logo {
+    position: absolute;
+    left: 50%;
+    margin-left: -114px; /* 50% */
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.button.is-spotify {
+    background-color: transparent;
+    color: #1db954;
+    border-color: #1db954;
+}
+
+.button.is-spotify:hover {
+    background-color: #1db954;
+    color: black;
+}
