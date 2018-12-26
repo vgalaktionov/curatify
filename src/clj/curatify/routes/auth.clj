@@ -16,7 +16,7 @@
         user (assoc (spotify/me token) :token token)]
     (db/upsert-user! user)
     (-> (response/found "/")
-        (assoc :session (assoc session :user user)))))
+        (assoc :session (assoc session :identity user)))))
 
 
 (defn logout []
@@ -25,9 +25,7 @@
 
 
 (defn me [{session :session}]
-  (-> {:body (:user session)}
-      (response/content-type "application/transit+json")
-      response/ok))
+  (response/ok {:body (:identity session)}))
 
 
 (defroutes auth-routes

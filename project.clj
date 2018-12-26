@@ -4,6 +4,7 @@
   :url "http://example.com/FIXME"
 
   :dependencies [[baking-soda "0.2.0" :exclusions [cljsjs/react-bootstrap]]
+                 [buddy "2.0.0"]
                  [cheshire "5.8.1"]
                  [clj-commons/secretary "1.2.4"]
                  [clj-http "3.9.1"]

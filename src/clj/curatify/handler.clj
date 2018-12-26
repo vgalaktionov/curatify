@@ -26,7 +26,8 @@
           (wrap-routes middleware/wrap-formats))
       (-> #'api-routes
           (wrap-routes middleware/wrap-csrf)
-          (wrap-routes middleware/wrap-formats))
+          (wrap-routes middleware/wrap-formats)
+          (wrap-routes middleware/wrap-restricted))
       (route/not-found
         (:body
           (error-page {:status 404

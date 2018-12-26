@@ -8,12 +8,10 @@
 
 
 (defn inbox [{session :session :as req}]
-  (as-> {:id (get-in session [:user :id])} v
+  (as-> {:id (get-in session [:identity :id])} v
         (db/get-user-inbox v)
         (assoc {} :body v)
-        (log/spy v)
         (response/ok v)))
-        ;(response/content-type v "application/transit+json")))
 
 
 (defroutes api-routes

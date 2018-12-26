@@ -12,8 +12,23 @@
             [ring.middleware.flash :refer [wrap-flash]]
             [immutant.web.middleware :refer [wrap-session]]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
-            [ring.middleware.session.cookie :refer [cookie-store]])
+            [ring.middleware.session.cookie :refer [cookie-store]]
+            [buddy.auth.middleware :refer [wrap-authentication]]
+            [buddy.auth.backends.session :refer [session-backend]]
+            [buddy.auth.accessrules :refer [restrict]]
+            [buddy.auth :refer [authenticated?]])
   (:import))
+
+
+(defn on-auth-error [request response]
+  {:status  403
+   :headers {"Content-Type" "text/plain"}
+   :body    (str "Access to " (:uri request) " is not authorized")})
+
+
+(defn wrap-restricted [handler]
+  (restrict handler {:handler authenticated?
+                     :on-error on-auth-error}))
 
 
 (defn wrap-internal-error [handler]
@@ -47,6 +62,7 @@
       wrap-webjars
       wrap-flash
       (wrap-session {:cookie-attrs {:http-only true :path "/"}})
+      (wrap-authentication (session-backend))
       (wrap-defaults
         (-> site-defaults
             (assoc-in [:security :anti-forgery] false)
