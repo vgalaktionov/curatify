@@ -116,10 +116,35 @@
   (r/render [#'navbar] (.getElementById js/document "navbar"))
   (r/render [#'page] (.getElementById js/document "app")))
 
+
+(defn extract [js-object key]
+  (get (js->clj js-object) key))
+
+
+(defn configure-spotify []
+  (set! (.-onSpotifyWebPlaybackSDKReady js/window)
+        (fn []
+          (let [token (get-in @session [:user :token :access_token])
+                player (js/Spotify.Player. (js-obj "name" "Curatify Player" "getOAuthToken" (fn [cb] (cb token))))]
+            (.addListener player "initialization_error" (fn [obj] (.error js/console (extract obj "message"))))
+            (.addListener player "authentication_error" (fn [obj] (.error js/console (extract obj "message"))))
+            (.addListener player "account_error" (fn [obj] (.error js/console (extract obj "message"))))
+            (.addListener player "playback_error" (fn [obj] (.error js/console (extract obj "message"))))
+            (.addListener player "player_state_changed" (fn [obj] (.log js/console obj)))
+            (.addListener player "ready" (fn [props]
+                                           (let [device-id (extract props "device_id")]
+                                             (.log js/console (str "Ready with Device ID " device-id)))))
+            (.addListener player "not_ready" (fn [props]
+                                               (let [device-id (extract props "device_id")]
+                                                 (.log js/console (str "Device ID has gone offline " device-id)))))
+            (.connect player)))))
+
+
 (defn init! []
   (ajax/load-interceptors!)
   (fetch-user!)
   (fetch-inbox!)
+  (configure-spotify)
   (hook-browser-navigation!)
   (mount-components)
   (.log js/console session))

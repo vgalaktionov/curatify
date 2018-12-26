@@ -8,9 +8,9 @@
   <body>
     <div id="navbar"></div>
     <div id="app">
-      <div class="container-fluid">
-        <div class="card-deck">
-          <div class="card-block">
+      <section class="section">
+        <div class="container">
+          <div class="content">
             <h4>Welcome to curatify</h4>
             <p>If you're seeing this message, that means you haven't yet compiled your ClojureScript!</p>
             <p>Please run <code>lein figwheel</code> to start the ClojureScript compiler and reload the page.</p>
@@ -25,7 +25,7 @@
             <p>See <a href="http://www.luminusweb.net/docs/clojurescript.md">ClojureScript</a> documentation for further details.</p>
           </div>
         </div>
-      </div>
+      </section>
     </div>
 
     <!-- scripts and styles -->
@@ -35,6 +35,7 @@
     {% style "/css/screen.css" %}
 
     {% script "/assets/font-awesome/js/all.js" %}
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
 
     <script type="text/javascript">
         var csrfToken = "{{csrf-token}}";

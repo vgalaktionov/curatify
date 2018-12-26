@@ -18,6 +18,7 @@
 
 (def accounts "https://accounts.spotify.com")
 (def api "https://api.spotify.com/v1")
+(def scope "user-read-email user-library-read user-library-modify streaming user-read-birthdate user-read-private")
 
 
 (defn auth-url []
@@ -25,7 +26,7 @@
        (form-encode {:client_id (client-id)
                      :redirect_uri (redirect-uri)
                      :response_type "code"
-                     :scope "user-read-email user-library-read user-library-modify"})))
+                     :scope scope})))
 
 
 (defn enrich-token [token]
