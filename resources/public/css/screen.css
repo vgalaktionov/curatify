@@ -31,3 +31,9 @@ nav {
     background-color: #1db954;
     color: black;
 }
+
+
+.playback {
+    font-size: 40pt;
+    border-color: transparent;
+}

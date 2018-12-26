@@ -4,12 +4,11 @@
             [goog.history.EventType :as HistoryEventType]
             [markdown.core :refer [md->html]]
             [curatify.ajax :as ajax]
+            [curatify.store :refer [session device-id playback-status]]
+            [curatify.components.curate :refer [curate]]
             [ajax.core :refer [GET POST]]
             [secretary.core :as secretary :include-macros true])
   (:import goog.History))
-
-
-(defonce session (r/atom {:page :home :user {} :inbox []}))
 
 
 (defn authenticated? []
@@ -60,17 +59,12 @@
      [:img {:src "/img/warning_clojure.png"}]]]])
 
 
-(defn inbox-list []
-  [:nav.panel
-   [:p.panel-heading "Inbox tracks"]
-   (map (fn [item] ^{:key (:id item)} [:a.panel-block (:name item)]) (:inbox @session))])
-
-
 (defn home-page []
   [:section.section
    [:div.container.text-center
-    (if (authenticated?)
-      [inbox-list])]])
+    [:div.columns
+     (if (authenticated?)
+       [curate])]]])
 
 
 (def pages
@@ -130,14 +124,18 @@
             (.addListener player "authentication_error" (fn [obj] (.error js/console (extract obj "message"))))
             (.addListener player "account_error" (fn [obj] (.error js/console (extract obj "message"))))
             (.addListener player "playback_error" (fn [obj] (.error js/console (extract obj "message"))))
-            (.addListener player "player_state_changed" (fn [obj] (.log js/console obj)))
+            (.addListener player "player_state_changed" (fn [obj]
+                                                          (reset! playback-status (js->clj obj))
+                                                          (.log js/console @playback-status)))
             (.addListener player "ready" (fn [props]
-                                           (let [device-id (extract props "device_id")]
-                                             (.log js/console (str "Ready with Device ID " device-id)))))
+                                           (let [id (extract props "device_id")]
+                                             (reset! device-id id)
+                                             (.log js/console (str "Ready with Device ID " id)))))
             (.addListener player "not_ready" (fn [props]
-                                               (let [device-id (extract props "device_id")]
-                                                 (.log js/console (str "Device ID has gone offline " device-id)))))
-            (.connect player)))))
+                                               (let [id (extract props "device_id")]
+                                                 (.log js/console (str "Device ID has gone offline " id)))))
+            (.connect player)
+            (.log js/console @device-id)))))
 
 
 (defn init! []

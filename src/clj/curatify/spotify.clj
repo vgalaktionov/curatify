@@ -18,7 +18,7 @@
 
 (def accounts "https://accounts.spotify.com")
 (def api "https://api.spotify.com/v1")
-(def scope "user-read-email user-library-read user-library-modify streaming user-read-birthdate user-read-private")
+(def scope "user-read-email user-library-read user-library-modify streaming user-read-birthdate user-read-private user-modify-playback-state")
 
 
 (defn auth-url []
