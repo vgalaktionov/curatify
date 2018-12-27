@@ -23,7 +23,27 @@
           (db/update-genre-affinities! {:playlist-id playlist-id :ga ga}))))
 
 
+(defn track-affinities [playlist]
+  (let [playlist-id (:id playlist)
+        {genre-aff :genre_affinities artist-aff :artist_affinities} (db/get-playlist-affinities {:playlist-id playlist-id})
+        user-id (:user_id playlist)
+        tracks (db/get-user-inbox {:id user-id})]
+    (doall (map (fn [track]
+                  (let [genre-overlap (or (select-keys genre-aff (map keyword (:genres track))) {})
+                        track-genre-aff (or (reduce + (vals genre-overlap)) 0)
+                        artist-overlap (or (select-keys artist-aff (map keyword (:artists track))) {})
+                        track-artist-aff (or (reduce + (map :percentage (vals artist-overlap))) 0)
+                        total-aff (+ track-artist-aff track-genre-aff)]
+                    (db/set-inbox-track-affinities {:user-id user-id
+                                                    :track-id (:id track)
+                                                    :playlist-aff (merge (:playlist_affinities track)
+                                                                        {playlist-id total-aff})})))
+                tracks))))
+
+
+
 (defn analyze-all []
   (log/info "Analyzing all playlist affinities")
-  (log/info (with-out-str (time (doseq [playlist-id (map :id (db/get-playlist-ids))]
-                                  (playlist-affinities playlist-id))))))
+  (let [playlists (db/get-playlists)]
+    (log/info (with-out-str (time (doall (map playlist-affinities (map :id playlists))))))
+    (log/info (with-out-str (time (doall (map track-affinities playlists)))))))

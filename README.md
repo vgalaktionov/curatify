@@ -1,8 +1,9 @@
 # curatify
+Web app to make music discovery through spotify more enjoyable.
 
 generated using Luminus version "3.10.26"
 
-FIXME
+Vadim Galaktionov
 
 ## Prerequisites
 

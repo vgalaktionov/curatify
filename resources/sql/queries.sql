@@ -29,9 +29,8 @@ on conflict (id) do update set
 select id from playlists where user_id = :id;
 
 
--- :name get-playlist-ids :? :*
--- :doc retrieves playlist ids
-select id from playlists;
+-- :name get-playlists :? :*
+select * from playlists;
 
 
 -- :name upsert-tracks! :! :n
@@ -122,6 +121,10 @@ update playlists set artist_affinities = :aa where id = :playlist-id;
 update playlists set genre_affinities = :ga where id = :playlist-id;
 
 
+-- :name get-playlist-affinities :? :1
+select genre_affinities, artist_affinities from playlists where id = :playlist-id;
+
+
 -- :name update-inbox! :! :n
 -- :doc puts tracks from inbox-marked playlists into the inbox table
 insert into inbox
@@ -136,7 +139,7 @@ on conflict (user_id, track_id) do nothing;
 
 -- :name get-user-inbox :? :*
 -- :doc puts tracks from inbox-marked playlists into the inbox table
-select t.id, t.name from inbox i
+select t.id, t.name, i.genres, i.artists, i.playlist_affinities from inbox i
 inner join tracks t on t.id = i.track_id
 where i.user_id = :id;
 
@@ -153,3 +156,10 @@ select i.track_id, json_agg(artist_id) as artists, json_array_elements(json_agg(
 	group by i.track_id
 ) as temp
 where inbox.track_id = temp.track_id;
+
+
+-- :name set-inbox-track-affinities :! :n
+update inbox
+set playlist_affinities = :playlist-aff
+where track_id = :track-id
+and user_id = :user-id;
