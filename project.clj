@@ -34,7 +34,7 @@
                  [org.postgresql/postgresql "42.2.5"]
                  [org.webjars.npm/bulma "0.7.2"]
                  [org.webjars.npm/bulmaswatch "0.6.1"]
-                 [org.webjars/font-awesome "5.5.0"]
+                 [org.webjars/material-design-icons "3.0.1"]
                  [org.webjars/webjars-locator "0.34"]
                  [reagent "0.8.1"]
                  [ring-webjars "0.2.0"]

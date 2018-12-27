@@ -23,7 +23,7 @@
   [:div.navbar-item
    [:a.button.is-spotify {:href "/auth/login"}
     [:span.icon
-     [:i.fab.fa-spotify]]
+     [:i.mdi.mdi-spotify]]
     [:span "Login with Spotify"]]])
 
 

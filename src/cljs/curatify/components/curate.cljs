@@ -23,7 +23,7 @@
 
 
 (defn play-pause-button []
-  [:div.column.is-one-fifth.is-offset-two-fifths
+  [:div.column.is-one-fifth
    [:button.playback {:on-click play-pause}
     [:span.icon.is-large
      [:i {:class (if (not (playing?))
@@ -31,12 +31,45 @@
                    "mdi mdi-pause")}]]]])
 
 
+(defn next-button []
+  [:div.column.is-one-fifth
+   [:button.playback
+    [:span.icon.is-large
+     [:i.mdi.mdi-skip-next]]]])
+
+
+(defn previous-button []
+  [:div.column.is-one-fifth
+   [:button.playback
+    [:span.icon.is-large
+     [:i.mdi.mdi-skip-previous]]]])
+
+
+(defn like-button []
+  [:div.column.is-one-fifth
+   [:button.playback
+    [:span.icon.is-large
+     [:i.mdi.mdi-thumb-up]]]])
+
+
+(defn dislike-button []
+  [:div.column.is-one-fifth
+   [:button.playback
+    [:span.icon.is-large
+     [:i.mdi.mdi-thumb-down]]]])
+
+
 (defn player-layout []
   [:div.column.is-two-thirds
    [:div.columns
     [:div.column.is-half.is-offset-one-quarter.has-text-centered
-     [:div.columns
-      [play-pause-button]]]]])
+     [:div.album-art]]]
+   [:div.columns.playback-buttons.is-vcentered
+    [dislike-button]
+    [previous-button]
+    [play-pause-button]
+    [next-button]
+    [like-button]]])
 
 
 

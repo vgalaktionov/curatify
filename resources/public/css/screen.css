@@ -36,4 +36,18 @@ nav {
 .playback {
     font-size: 40pt;
     border-color: transparent;
+    outline: none;
+}
+
+.playback:hover {
+    color: rgb(129, 135, 141);
+}
+
+.playback-buttons {
+    margin-left: 6rem;
+}
+
+
+.album-art {
+    min-height: 300px;
 }
