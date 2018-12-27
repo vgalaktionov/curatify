@@ -1,6 +1,7 @@
 (ns curatify.components.curate
   (:require [curatify.store :refer [session playback-status]]
             [curatify.spotify :refer [play pause previous-track next-track]]
+            [clojure.string :as str]
             [reagent.core :as r]))
 
 
@@ -14,6 +15,10 @@
 
 (defn track-position []
   (get @playback-status "position"))
+
+
+(defn current-track-info []
+  (get-in @playback-status ["track_window" "current_track"]))
 
 
 (defn inbox-list []
@@ -62,17 +67,33 @@
 
 
 (defn track-progress []
-  [:progress.progress {:max (track-duration) :value (track-position)}])
+  [:div.column.is-12.has-text-centered
+   [:progress.progress {:max (track-duration) :value (track-position)}]])
+
+
+(defn currently-playing []
+  (let [track-info (current-track-info)
+        track-name (get track-info "name")
+        track-artists (->> (get track-info "artists")
+                           (map #(get % "name"))
+                           (str/join ", "))
+        large-image (->> (get-in @playback-status ["track_window" "current_track" "album" "images"])
+                         (apply max-key :height))]
+    [:div.column.is-half.is-offset-one-quarter.has-text-centered.currently-playing
+     [:img {:src (get large-image "url")}]
+     [:h5.is-size-5 track-name]
+     [:p track-artists]]))
+
+
 
 
 (defn player-layout []
   [:div.column.is-6.player
    [:div.columns
-    [:div.column.is-half.is-offset-one-quarter.has-text-centered
-     [:div.album-art]]]
+    [currently-playing]]
    [:div.columns
     [track-progress]]
-   [:div.columns.playback-buttons.is-vcentered
+   [:div.columns.playback-buttons.is-vcentered.has-text-centered
     [dislike-button]
     [previous-button]
     [play-pause-button]
