@@ -1,6 +1,6 @@
 (ns curatify.spotify
   (:require [curatify.ajax :as ajax]
-            [curatify.store :refer [device-id session]]
+            [curatify.store :refer [device-id session playback-status]]
             [ajax.core :refer [PUT POST]]))
 
 
@@ -16,7 +16,11 @@
 
 
 (defn play [uris]
-  (api-req PUT "/me/player/play" {:params {:uris uris} :url-params {:device_id @device-id}}))
+  (let [position (get @playback-status "position")
+        params (if (nil? position)
+                 {:uris uris}
+                 {:position_ms position})]
+    (api-req PUT "/me/player/play" {:params params :url-params {:device_id @device-id}})))
 
 
 (defn pause []
