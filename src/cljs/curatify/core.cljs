@@ -115,6 +115,15 @@
   (get (js->clj js-object) key))
 
 
+(defn poll-player [player]
+  (fn []
+    (let [promise (.getCurrentState player)]
+      (.then promise (fn [state]
+                       (if (nil? state)
+                         (.error js/console "User is not playing music through the Web Playback SDK")
+                         (reset! playback-status (js->clj state))))))))
+
+
 (defn configure-spotify []
   (set! (.-onSpotifyWebPlaybackSDKReady js/window)
         (fn []
@@ -135,6 +144,7 @@
                                                (let [id (extract props "device_id")]
                                                  (.log js/console (str "Device ID has gone offline " id)))))
             (.connect player)
+            (.setInterval js/window (poll-player player) 1000)
             (.log js/console @device-id)))))
 
 

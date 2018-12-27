@@ -8,8 +8,16 @@
   (false? (get @playback-status "paused")))
 
 
+(defn track-duration []
+  (get @playback-status "duration"))
+
+
+(defn track-position []
+  (get @playback-status "position"))
+
+
 (defn inbox-list []
-  [:nav.panel.column.is-one-third
+  [:nav.panel.column.is-4
    [:p.panel-heading "INBOX TRACKS"]
    (map (fn [item] ^{:key (:id item)} [:a.panel-block (:name item)])
         (take 10 (:inbox @session)))])
@@ -53,11 +61,17 @@
   [generic-playback "mdi mdi-thumb-down"])
 
 
+(defn track-progress []
+  [:progress.progress {:max (track-duration) :value (track-position)}])
+
+
 (defn player-layout []
-  [:div.column.is-two-thirds
+  [:div.column.is-6.player
    [:div.columns
     [:div.column.is-half.is-offset-one-quarter.has-text-centered
      [:div.album-art]]]
+   [:div.columns
+    [track-progress]]
    [:div.columns.playback-buttons.is-vcentered
     [dislike-button]
     [previous-button]
@@ -70,4 +84,5 @@
 (defn curate []
   [:<>
    [inbox-list]
+   [:div.column.is-1]
    [player-layout]])

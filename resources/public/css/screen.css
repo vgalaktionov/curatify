@@ -44,10 +44,14 @@ nav {
 }
 
 .playback-buttons {
-    margin-left: 6rem;
+    /*margin-left: 6rem;*/
 }
 
 
 .album-art {
     min-height: 300px;
+}
+
+.player {
+    /*margin-left: 6rem;*/
 }
