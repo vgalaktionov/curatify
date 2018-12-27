@@ -79,7 +79,7 @@
                            (str/join ", "))
         large-image (->> (get-in @playback-status ["track_window" "current_track" "album" "images"])
                          (apply max-key :height))]
-    [:div.column.is-half.is-offset-one-quarter.has-text-centered.currently-playing
+    [:div.column.is-12.has-text-centered.currently-playing
      [:img {:src (get large-image "url")}]
      [:h5.is-size-5 track-name]
      [:p track-artists]]))

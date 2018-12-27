@@ -55,3 +55,12 @@ nav {
 .player {
     /*margin-left: 6rem;*/
 }
+
+.currently-playing {
+    height: 380px;
+    min-height: 380px;
+}
+
+.currently-playing img {
+    height: 280px;
+}
