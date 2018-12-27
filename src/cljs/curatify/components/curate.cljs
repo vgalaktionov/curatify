@@ -1,6 +1,6 @@
 (ns curatify.components.curate
   (:require [curatify.store :refer [session playback-status]]
-            [curatify.spotify :refer [play pause]]
+            [curatify.spotify :refer [play pause previous-track next-track]]
             [reagent.core :as r]))
 
 
@@ -22,41 +22,35 @@
       (pause))))
 
 
+(defn generic-playback
+  ([icon-class] [generic-playback #() icon-class])
+  ([clickhandler icon-class]
+   [:div.column.is-one-fifth
+    [:button.playback {:on-click clickhandler}
+     [:span.icon.is-large
+      [:i {:class icon-class}]]]]))
+
+
 (defn play-pause-button []
-  [:div.column.is-one-fifth
-   [:button.playback {:on-click play-pause}
-    [:span.icon.is-large
-     [:i {:class (if (not (playing?))
-                   "mdi mdi-play"
-                   "mdi mdi-pause")}]]]])
+  [generic-playback play-pause (if (not (playing?))
+                                 "mdi mdi-play"
+                                 "mdi mdi-pause")])
 
 
 (defn next-button []
-  [:div.column.is-one-fifth
-   [:button.playback
-    [:span.icon.is-large
-     [:i.mdi.mdi-skip-next]]]])
+  [generic-playback next-track "mdi mdi-skip-next"])
 
 
 (defn previous-button []
-  [:div.column.is-one-fifth
-   [:button.playback
-    [:span.icon.is-large
-     [:i.mdi.mdi-skip-previous]]]])
+  [generic-playback previous-track "mdi mdi-skip-previous"])
 
 
 (defn like-button []
-  [:div.column.is-one-fifth
-   [:button.playback
-    [:span.icon.is-large
-     [:i.mdi.mdi-thumb-up]]]])
+  [generic-playback "mdi mdi-thumb-up"])
 
 
 (defn dislike-button []
-  [:div.column.is-one-fifth
-   [:button.playback
-    [:span.icon.is-large
-     [:i.mdi.mdi-thumb-down]]]])
+  [generic-playback "mdi mdi-thumb-down"])
 
 
 (defn player-layout []
