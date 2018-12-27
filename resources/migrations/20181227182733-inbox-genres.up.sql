@@ -1,0 +1,1 @@
+alter table inbox add column genres jsonb;

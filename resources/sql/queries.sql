@@ -139,3 +139,17 @@ on conflict (user_id, track_id) do nothing;
 select t.id, t.name from inbox i
 inner join tracks t on t.id = i.track_id
 where i.user_id = :id;
+
+
+-- :name enrich-inbox! :! :n
+-- :doc denormalizes artists and tracks
+update inbox
+set artists = temp.artists,
+	genres = temp.genres
+from (
+select i.track_id, json_agg(artist_id) as artists, json_array_elements(json_agg(a.genres)) as genres from inbox i
+	inner join artists_tracks at on at.track_id = i.track_id
+	inner join artists a on a.id = at.artist_id
+	group by i.track_id
+) as temp
+where inbox.track_id = temp.track_id;

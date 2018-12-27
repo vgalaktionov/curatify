@@ -88,4 +88,6 @@
     (log/info (str "ingesting for user " (:id user) "..."))
     (log/info (with-out-str (time (ingest-for-user user)))))
   (log/info "enriching artist data...")
-  (log/info (with-out-str (time (ingest-artist-details)))))
+  (log/info (with-out-str (time (ingest-artist-details))))
+  (log/info "enriching inbox...")
+  (log/info (with-out-str (time (db/enrich-inbox!)))))

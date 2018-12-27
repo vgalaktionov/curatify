@@ -1,0 +1,1 @@
+alter table inbox drop column genres;
