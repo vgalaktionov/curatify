@@ -1,6 +1,6 @@
 FROM openjdk:8-alpine
 
-COPY target/uberjar/curatify.jar /curatify/app.jar
+COPY ./target/uberjar/curatify.jar /curatify/app.jar
 
 EXPOSE 3000
 

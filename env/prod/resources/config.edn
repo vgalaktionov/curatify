@@ -1,2 +1,5 @@
 {:prod true
- :port 3000}
+ :port 3000
+ :spotify {:client-id "cad353b0c95a4f819d47426cd782ec3b"
+           :client-secret "f85c4b1ac0444ee8ae9a604c39fb85ca"
+           :redirect-uri "http://curatify.xyz/auth/callback"}}

@@ -1,0 +1,25 @@
+version: '3'
+
+volumes:
+  db-data:
+    external: false
+
+services:
+  web:
+    image: registry.gitlab.com/vgalaktionov/curatify
+    build:
+      context: .
+    ports:
+      - 80:3000
+    depends_on:
+      - db
+    env_file:
+      - .env
+    command: sh -c "java -jar /curatify/app.jar migrate && java -jar /curatify/app.jar"
+
+  db:
+    image: postgres:11-alpine
+    volumes:
+      - db-data:/var/lib/postgresql/db-data
+    env_file:
+      - .env
