@@ -25,7 +25,7 @@
 
 
 (defn login-button []
-  [:div.navbar-item
+  [:div
    [:a.button.is-spotify {:href "/auth/login"}
     [:span.icon
      [:i.mdi.mdi-spotify]]
@@ -40,38 +40,40 @@
 
 
 (defn navbar []
-  [:nav.navbar
-   [:div.navbar-brand
-    [:a.navbar-item.is-logo {:href "/"}
-     [:img {:src "/img/logo_transparent.png" :width 100}]]]
-   [:div.navbar-menu
     (when (authenticated?)
-      [:div.navbar-start
-       [nav-link "#/" "Curate" :curate]
-       ;[nav-link "#/about" "About" :about]
-       [nav-link "#/playlists" "Playlists" :playlists]])
-    [:div.navbar-end
-
-     (if (authenticated?)
-       [:<>
-        [:div.navbar-item (str "Welcome, " (get-in @session [:user :display_name]))]
-        [logout-button]]
-       [login-button])]]])
-
-;
-;(defn about-page []
-;  [:div.container
-;   [:div.row
-;    [:div.col-md-12
-;     [:img {:src "/img/warning_clojure.png"}]]]])
+      [:nav.navbar
+       [:div.navbar-brand
+        [:a.navbar-item.is-logo {:href "/"}
+         [:img {:src "/img/logo_transparent.png" :width 100}]]]
+       [:div.navbar-menu
+          [:div.navbar-start
+           [nav-link "#/" "Curate" :index]
+           [nav-link "#/playlists" "Playlists" :playlists]]
+        [:div.navbar-end
+         [:div.navbar-item (str "Welcome, " (get-in @session [:user :display_name]))]
+         [logout-button]]]]))
 
 
-(defn curate-page []
-  [:section.section
-   [:div.container
-    [:div.columns
-     (if (authenticated?)
-       [curate])]]])
+(defn login []
+  [:section.hero.is-black
+   [:div.hero-body
+    [:div.container.has-text-centered
+     [:img.banner {:src "/img/logo_transparent.png"}]
+     [:h3.is-size-3 "Welcome!"]
+     [:p.subtitle "To start discovering new music, please"]
+     [login-button]
+     [:br]]]])
+
+
+(defn index-page []
+  (if (authenticated?)
+    [:section.section
+     [:div.container
+      [:div.columns
+       (if (authenticated?)
+         [curate]
+         [login])]]]
+    [login]))
 
 
 (defn playlists-page []
@@ -82,10 +84,8 @@
 
 
 (def pages
-  {:curate #'curate-page
-   ;:about #'about-page
+  {:index #'index-page
    :playlists #'playlists-page})
-
 
 
 (defn page []
@@ -97,10 +97,7 @@
 (secretary/set-config! :prefix "#")
 
 (secretary/defroute "/" []
-                    (swap! session assoc :page :curate))
-
-;(secretary/defroute "/about" []
-;                    (swap! session assoc :page :about))
+                    (swap! session assoc :page :index))
 
 (secretary/defroute "/playlists" []
                     (swap! session assoc :page :playlists))
