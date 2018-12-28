@@ -8,10 +8,10 @@
 
 (defn schedule-jobs []
   (log/warn "Scheduling periodic jobs to run...")
-  (scheduling/schedule #(fn []
-                          (ingest-all)
-                          (analyze-all))
-   (scheduling/every 5 :minutes)))
+  (scheduling/schedule (fn []
+                         (ingest-all)
+                         (analyze-all))
+                       (scheduling/every 5 :minutes)))
 
 
 (defstate jobs
