@@ -4,16 +4,21 @@
             [curatify.store :refer [playlists]]))
 
 
-(defn playlist-row [{:keys [id name curated inbox images]}]
+(defn playlist-row [{:keys [id name playlist_type images]}]
   (let [large-image (apply min-key :height images)]
     ^{:key id} [:tr
                 [:td
                  [:img.playlist-cover {:src (:url large-image)}]]
                 [:td name]
                 [:td
-                 [:input {:type "checkbox" :checked curated}]]
-                [:td
-                 [:input {:type "checkbox" :checked inbox}]]]))
+                 [:div.select
+                  [:select {:on-change (fn [evt]
+                                         (api/change-playlist-type! id (-> evt .-target .-value))
+                                         (api/fetch-playlists!))}
+                   (for [p-type ["ignored" "curated" "inbox"]]
+                     ^{:key p-type} [:option {:selected (= playlist_type p-type)}
+                                     p-type])]]]]))
+
 
 
 (defn playlists-table []
@@ -24,10 +29,9 @@
       [:tr
        [:th]
        [:th "Name"]
-       [:th "Curated"]
-       [:th "Inbox"]]]
+       [:th "Type"]]]
      [:tbody
-      (map playlist-row @playlists)]]))
+      (map playlist-row (sort-by :id @playlists))]]))
 
 
 (defn playlists-screen []

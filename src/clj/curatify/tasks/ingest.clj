@@ -22,7 +22,7 @@
 
 (defn ingest-user-playlists [{user-id :id token :token :as user}]
   (->> (spotify/me-playlists token)
-       (map (fn [{:keys [id name images]}] [id user-id name false images]))
+       (map (fn [{:keys [id name images]}] [id user-id name "ignored" images]))
        (assoc {} :playlists)
        (db/upsert-playlists!))
   user)

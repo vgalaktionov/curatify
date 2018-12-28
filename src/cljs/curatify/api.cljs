@@ -1,5 +1,5 @@
 (ns curatify.api
-  (:require [ajax.core :refer [GET]]
+  (:require [ajax.core :refer [GET POST]]
             [curatify.store :refer [session playlists]]))
 
 
@@ -13,3 +13,7 @@
 
 (defn fetch-playlists! []
   (GET "/api/playlists" {:handler #(reset! playlists (:body %))}))
+
+
+(defn change-playlist-type! [playlist-id new-type]
+  (POST (str "/api/playlists/" playlist-id "/change-type") {:params {:new-type new-type}}))

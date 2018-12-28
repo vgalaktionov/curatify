@@ -17,7 +17,7 @@ SELECT * FROM users;
 -- :name upsert-playlists! :! :n
 -- :doc inserts or updates multiple playlists
 insert into playlists
-(id, user_id, name, curated, images)
+(id, user_id, name, playlist_type, images)
 values :t*:playlists
 on conflict (id) do update set
     name = EXCLUDED.name,
@@ -133,7 +133,7 @@ select p.user_id, pt.track_id
 from playlists_tracks pt
 inner join playlists p on p.id = pt.playlist_id
 where p.user_id = :id
-and p.inbox = true
+and p.playlist_type = 'inbox'
 on conflict (user_id, track_id) do nothing;
 
 
@@ -163,3 +163,9 @@ update inbox
 set playlist_affinities = :playlist-aff
 where track_id = :track-id
 and user_id = :user-id;
+
+
+-- :name change-playlist-type! :! :n
+update playlists
+set playlist_type = :new-type
+where id = :id;
