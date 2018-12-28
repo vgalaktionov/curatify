@@ -5,7 +5,7 @@ body {
 }
 nav {
     /*margin-bottom: 20px;*/
-    height: 120px;
+    height: 90px;
 }
 
 .navbar img {
@@ -15,7 +15,7 @@ nav {
 .navbar-item.is-logo {
     position: absolute;
     left: 50%;
-    margin-left: -114px; /* 50% */
+    margin-left: -64px; /* 50% */
     height: 100%;
     display: flex;
     align-items: center;
@@ -82,4 +82,9 @@ img.playlist-cover {
 
 img.play-spinner {
     padding-top: 0.5rem;
+}
+
+img.preloader {
+    margin-top: auto;
+    margin-bottom: auto;
 }

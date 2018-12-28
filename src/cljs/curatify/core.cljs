@@ -43,7 +43,7 @@
   [:nav.navbar
    [:div.navbar-brand
     [:a.navbar-item.is-logo {:href "/"}
-     [:img {:src "/img/logo_transparent.png" :width 150}]]]
+     [:img {:src "/img/logo_transparent.png" :width 100}]]]
    [:div.navbar-menu
     (when (authenticated?)
       [:div.navbar-start
@@ -68,7 +68,7 @@
 
 (defn home-page []
   [:section.section
-   [:div.container.text-center
+   [:div.container
     [:div.columns
      (if (authenticated?)
        [curate])]]])
@@ -165,7 +165,7 @@
   (ajax/load-interceptors!)
   (api/fetch-user!)
   (api/fetch-inbox!)
+  (api/fetch-playlists!)
   (configure-spotify)
   (hook-browser-navigation!)
-  (mount-components)
-  (.log js/console session))
+  (mount-components))

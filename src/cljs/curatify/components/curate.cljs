@@ -1,5 +1,5 @@
 (ns curatify.components.curate
-  (:require [curatify.store :refer [session playback-status liked disliked]]
+  (:require [curatify.store :refer [session playback-status liked disliked playlists]]
             [curatify.spotify :refer [play pause previous-track next-track]]
             [clojure.string :as str]
             [curatify.api :refer [like-track! fetch-inbox! dislike-track!]]
@@ -20,6 +20,14 @@
 
 (defn current-track-info []
   (get-in @playback-status ["track_window" "current_track"]))
+
+
+(defn lookup-track-id-in-inbox [id]
+  (some #(if (= (:id %) id) %) (:inbox @session)))
+
+
+(defn lookup-playlist [id]
+  (some #(if (= (:id %) id) %) @playlists))
 
 
 (defn track-line [{:keys [id name]}]
@@ -101,6 +109,14 @@
 (defn currently-playing []
   (let [track-info (current-track-info)
         track-name (get track-info "name")
+        track-id (get track-info "id")
+        track-playing (not (nil? track-info))
+        inbox-track (lookup-track-id-in-inbox track-id)
+        matching-playlist (if track-playing (->> (:playlist_affinities inbox-track)
+                                                 (apply max-key val)
+                                                 (first)
+                                                 (name)
+                                                 (lookup-playlist)))
         track-artists (->> (get track-info "artists")
                            (map #(get % "name"))
                            (str/join ", "))
@@ -109,7 +125,8 @@
     [:div.column.is-12.has-text-centered.currently-playing
      [:img {:src (get large-image "url")}]
      [:h5.is-size-5 track-name]
-     [:p track-artists]]))
+     [:p track-artists]
+     (if track-playing [:p.is-size-7 (str "matches: " (:name matching-playlist))])]))
 
 
 

@@ -22,7 +22,6 @@
 
 
 (defn playlists-table []
-  (api/fetch-playlists!)
   (fn []
     [:table.table.center-table
      [:thead
