@@ -11,6 +11,9 @@
   (:import goog.History))
 
 
+(set! *warn-on-infer* true)
+
+
 (defn authenticated? []
   (not-empty (:user @session)))
 
@@ -115,7 +118,7 @@
   (get (js->clj js-object) key))
 
 
-(defn poll-player [player]
+(defn poll-player [^js/Spotify.Player player]
   (fn []
     (let [promise (.getCurrentState player)]
       (.then promise (fn [state]
