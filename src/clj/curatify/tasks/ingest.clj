@@ -46,7 +46,7 @@
 
 
 (defn ingest-user-playlist-tracks [{user-id :id token :token :as user}]
-  (doseq [playlist-id (map :id (db/get-user-playlist-ids {:id user-id}))]
+  (doseq [playlist-id (map :id (db/get-user-playlists {:id user-id}))]
     (let [tracks (->> (spotify/playlist-tracks playlist-id token)
                       (map :track)
                       (remove #(nil? (:id %))))]

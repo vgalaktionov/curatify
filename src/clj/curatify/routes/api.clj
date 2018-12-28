@@ -8,11 +8,19 @@
 
 
 (defn inbox [{session :session :as req}]
-  (as-> {:id (get-in session [:identity :id])} v
-        (db/get-user-inbox v)
-        (assoc {} :body v)
-        (response/ok v)))
+  (->> {:id (get-in session [:identity :id])}
+       (db/get-user-inbox)
+       (assoc {} :body)
+       (response/ok)))
+
+
+(defn playlists [{session :session :as req}]
+  (->> {:id (get-in session [:identity :id])}
+       (db/get-user-playlists)
+       (assoc {} :body)
+       (response/ok)))
 
 
 (defroutes api-routes
-           (GET "/api/inbox" req (inbox req)))
+           (GET "/api/inbox" req (inbox req))
+           (GET "/api/playlists" req (playlists req)))

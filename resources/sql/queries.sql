@@ -24,9 +24,9 @@ on conflict (id) do update set
     images = EXCLUDED.images;
 
 
--- :name get-user-playlist-ids :? :*
+-- :name get-user-playlists :? :*
 -- :doc retrieves user playlist ids
-select id from playlists where user_id = :id;
+select * from playlists where user_id = :id;
 
 
 -- :name get-playlists :? :*

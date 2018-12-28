@@ -64,3 +64,17 @@ nav {
 .currently-playing img {
     height: 280px;
 }
+
+img.playlist-cover {
+    max-height: 60px;
+}
+
+.center-table th {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.center-table td {
+    text-align: center;
+    vertical-align: middle;
+}

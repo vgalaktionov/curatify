@@ -4,14 +4,16 @@
             [goog.history.EventType :as HistoryEventType]
             [markdown.core :refer [md->html]]
             [curatify.ajax :as ajax]
+            [curatify.api :as api]
             [curatify.store :refer [session device-id playback-status]]
             [curatify.components.curate :refer [curate]]
+            [curatify.components.playlists :refer [playlists-screen]]
             [ajax.core :refer [GET POST]]
             [secretary.core :as secretary :include-macros true])
   (:import goog.History))
 
 
-(set! *warn-on-infer* true)
+;(set! *warn-on-infer* true)
 
 
 (defn authenticated? []
@@ -43,9 +45,11 @@
     [:a.navbar-item.is-logo {:href "/"}
      [:img {:src "/img/logo_transparent.png" :width 150}]]]
    [:div.navbar-menu
-    [:div.navbar-start
-     [nav-link "#/" "Home" :home]
-     [nav-link "#/about" "About" :about]]
+    (when (authenticated?)
+      [:div.navbar-start
+       [nav-link "#/" "Home" :home]
+       [nav-link "#/about" "About" :about]
+       [nav-link "#/playlists" "Playlists" :playlists]])
     [:div.navbar-end
 
      (if (authenticated?)
@@ -70,9 +74,18 @@
        [curate])]]])
 
 
+(defn playlists-page []
+  [:section.section
+   [:div.container.text-center
+    [:div.columns.is-centered
+     [playlists-screen]]]])
+
+
 (def pages
   {:home #'home-page
-   :about #'about-page})
+   :about #'about-page
+   :playlists #'playlists-page})
+
 
 
 (defn page []
@@ -84,10 +97,13 @@
 (secretary/set-config! :prefix "#")
 
 (secretary/defroute "/" []
-  (swap! session assoc :page :home))
+                    (swap! session assoc :page :home))
 
 (secretary/defroute "/about" []
-  (swap! session assoc :page :about))
+                    (swap! session assoc :page :about))
+
+(secretary/defroute "/playlists" []
+                    (swap! session assoc :page :playlists))
 
 ;; -------------------------
 ;; History
@@ -102,12 +118,6 @@
 
 ;; -------------------------
 ;; Initialize app
-
-(defn fetch-user! []
-  (GET "/auth/me" {:handler #(swap! session assoc :user (:body %))}))
-
-(defn fetch-inbox! []
-  (GET "/api/inbox" {:handler #(swap! session assoc :inbox (:body %))}))
 
 (defn mount-components []
   (r/render [#'navbar] (.getElementById js/document "navbar"))
@@ -153,8 +163,8 @@
 
 (defn init! []
   (ajax/load-interceptors!)
-  (fetch-user!)
-  (fetch-inbox!)
+  (api/fetch-user!)
+  (api/fetch-inbox!)
   (configure-spotify)
   (hook-browser-navigation!)
   (mount-components)

@@ -4,3 +4,4 @@
 (defonce session (r/atom {:page :home :user {} :inbox []}))
 (defonce device-id (r/atom ""))
 (defonce playback-status (r/atom {}))
+(defonce playlists (r/atom []))
