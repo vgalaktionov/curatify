@@ -133,7 +133,7 @@
     (let [promise (.getCurrentState player)]
       (.then promise (fn [state]
                        (if (nil? state)
-                         (.error js/console "User is not playing music through the Web Playback SDK")
+                         (.debug js/console "User is not playing music through the Web Playback SDK")
                          (reset! playback-status (js->clj state))))))))
 
 

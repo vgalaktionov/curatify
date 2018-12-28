@@ -22,7 +22,6 @@
 
 
 (defn change-playlist-type [{{:keys [new-type id]} :params :as req}]
-  (println new-type id)
   (if (not (some #(= % new-type) ["inbox" "ignored" "curated"]))
     (-> "new playlist type is not valid!"
       (response/bad-request))

@@ -12,12 +12,12 @@
                 [:td name]
                 [:td
                  [:div.select
-                  [:select {:on-change (fn [evt]
+                  [:select {:value playlist_type
+                            :on-change (fn [evt]
                                          (api/change-playlist-type! id (-> evt .-target .-value))
                                          (api/fetch-playlists!))}
                    (for [p-type ["ignored" "curated" "inbox"]]
-                     ^{:key p-type} [:option {:selected (= playlist_type p-type)}
-                                     p-type])]]]]))
+                     ^{:key p-type} [:option p-type])]]]]))
 
 
 
