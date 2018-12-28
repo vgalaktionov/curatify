@@ -47,8 +47,8 @@
    [:div.navbar-menu
     (when (authenticated?)
       [:div.navbar-start
-       [nav-link "#/" "Home" :home]
-       [nav-link "#/about" "About" :about]
+       [nav-link "#/" "Curate" :curate]
+       ;[nav-link "#/about" "About" :about]
        [nav-link "#/playlists" "Playlists" :playlists]])
     [:div.navbar-end
 
@@ -58,15 +58,15 @@
         [logout-button]]
        [login-button])]]])
 
+;
+;(defn about-page []
+;  [:div.container
+;   [:div.row
+;    [:div.col-md-12
+;     [:img {:src "/img/warning_clojure.png"}]]]])
 
-(defn about-page []
-  [:div.container
-   [:div.row
-    [:div.col-md-12
-     [:img {:src "/img/warning_clojure.png"}]]]])
 
-
-(defn home-page []
+(defn curate-page []
   [:section.section
    [:div.container
     [:div.columns
@@ -82,8 +82,8 @@
 
 
 (def pages
-  {:home #'home-page
-   :about #'about-page
+  {:curate #'curate-page
+   ;:about #'about-page
    :playlists #'playlists-page})
 
 
@@ -97,10 +97,10 @@
 (secretary/set-config! :prefix "#")
 
 (secretary/defroute "/" []
-                    (swap! session assoc :page :home))
+                    (swap! session assoc :page :curate))
 
-(secretary/defroute "/about" []
-                    (swap! session assoc :page :about))
+;(secretary/defroute "/about" []
+;                    (swap! session assoc :page :about))
 
 (secretary/defroute "/playlists" []
                     (swap! session assoc :page :playlists))
