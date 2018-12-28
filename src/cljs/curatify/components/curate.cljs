@@ -29,7 +29,7 @@
 
 
 (defn play-pause []
-  (let [uris (vec (map #(str "spotify:track:" (:id %)) (:inbox @session)))]
+  (let [uris (vec (map #(str "spotify:track:" (:id %)) (take 10 (:inbox @session))))]
     (if (not (playing?))
       (play uris)
       (pause))))

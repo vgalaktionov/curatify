@@ -11,8 +11,11 @@
   ([method url] (api-req method url {}))
   ([method url opts]
    (let [token (get-in @session [:user :token :access_token])]
-     (method (str api url) (conj opts {:format :json
-                                       :headers {"Authorization" (str "Bearer " token)}})))))
+     (println token)
+     (method (str api url) (merge-with into opts {:format :json
+                                                  :headers {"Authorization" (str "Bearer " token)}
+                                                  :params {:access_token token}})))))
+
 
 
 (defn play [uris]
