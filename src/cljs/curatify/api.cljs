@@ -17,3 +17,11 @@
 
 (defn change-playlist-type! [playlist-id new-type]
   (POST (str "/api/playlists/" playlist-id "/change-type") {:params {:new-type new-type}}))
+
+
+(defn like-track! [track-id]
+  (POST (str "/api/tracks/" track-id "/like")))
+
+
+(defn dislike-track! [track-id]
+  (POST (str "/api/tracks/" track-id "/dislike")))

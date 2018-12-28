@@ -18,7 +18,15 @@
 
 (def accounts "https://accounts.spotify.com")
 (def api "https://api.spotify.com/v1")
-(def scope "user-read-email user-library-read user-library-modify streaming user-read-birthdate user-read-private user-modify-playback-state")
+(def scope (join " " ["user-read-email"
+                      "user-library-read"
+                      "user-library-modify"
+                      "streaming"
+                      "user-read-birthdate"
+                      "user-read-private"
+                      "user-modify-playback-state"
+                      "playlist-modify-private"
+                      "playlist-modify-public"]))
 
 
 (defn auth-url []
@@ -88,3 +96,13 @@
                           (str api "/artists")
                           access
                           {:query-params {:ids (join "," artist-ids)}})))))
+
+
+(defn add-tracks-to-playlist! [playlist-id track-ids {access :access_token}]
+  (let [uris (map #(str "spotify:track:" %) track-ids)]
+    (println uris)
+    (println playlist-id)
+    (api-req client/post
+             (str api "/playlists/" (name playlist-id) "/tracks")
+             access
+             {:query-params {:uris uris}})))

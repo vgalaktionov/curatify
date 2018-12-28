@@ -5,3 +5,5 @@
 (defonce device-id (r/atom ""))
 (defonce playback-status (r/atom {}))
 (defonce playlists (r/atom []))
+(defonce liked (r/atom #{}))
+(defonce disliked (r/atom #{}))

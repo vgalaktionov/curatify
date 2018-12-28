@@ -79,3 +79,7 @@ img.playlist-cover {
     text-align: center;
     vertical-align: middle;
 }
+
+img.play-spinner {
+    padding-top: 0.5rem;
+}

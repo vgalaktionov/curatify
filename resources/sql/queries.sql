@@ -29,8 +29,8 @@ on conflict (id) do update set
 select * from playlists where user_id = :id;
 
 
--- :name get-playlists :? :*
-select * from playlists;
+-- :name get-curated-playlists :? :*
+select * from playlists where playlist_type = 'curated';
 
 
 -- :name upsert-tracks! :! :n
@@ -137,11 +137,12 @@ and p.playlist_type = 'inbox'
 on conflict (user_id, track_id) do nothing;
 
 
--- :name get-user-inbox :? :*
+-- :name get-user-unheard-inbox :? :*
 -- :doc puts tracks from inbox-marked playlists into the inbox table
 select t.id, t.name, i.genres, i.artists, i.playlist_affinities from inbox i
 inner join tracks t on t.id = i.track_id
-where i.user_id = :id;
+where i.user_id = :id
+and i.status = 'unheard';
 
 
 -- :name enrich-inbox! :! :n
@@ -169,3 +170,14 @@ and user_id = :user-id;
 update playlists
 set playlist_type = :new-type
 where id = :id;
+
+
+-- :name get-inbox-track :? :1
+select * from inbox where user_id = :user-id and track_id = :track-id;
+
+
+-- :name set-inbox-track-status! :! :n
+update inbox
+set status = :status
+where user_id = :user-id
+and track_id = :track-id;
