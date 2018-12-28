@@ -2,6 +2,7 @@
   (:require
    [curatify.db.core :as db]
    [curatify.spotify :as spotify]
+   [curatify.tasks.ingest :refer [update-user-token]]
    [compojure.core :refer [defroutes GET]]
    [ring.util.http-response :as response]
    [clojure.tools.logging :as log]))
@@ -24,8 +25,8 @@
       (assoc :session nil)))
 
 
-(defn me [{session :session}]
-  (response/ok {:body (:identity session)}))
+(defn me [{{user :identity} :session}]
+  (response/ok {:body (update-user-token user)}))
 
 
 (defroutes auth-routes

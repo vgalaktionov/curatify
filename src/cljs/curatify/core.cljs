@@ -154,13 +154,13 @@
                                                (let [id (extract props "device_id")]
                                                  (.log js/console (str "Device ID has gone offline " id)))))
             (.connect player)
-            (.setInterval js/window (poll-player player) 1000)
-            (.log js/console @device-id)))))
+            (.setInterval js/window (poll-player player) 1000)))))
 
 
 (defn init! []
   (ajax/load-interceptors!)
   (api/fetch-user!)
+  (.setInterval js/window api/fetch-user! (* 1000 60))
   (api/fetch-inbox!)
   (api/fetch-playlists!)
   (configure-spotify)
