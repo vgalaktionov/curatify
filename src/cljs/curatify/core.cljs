@@ -25,7 +25,7 @@
 
 
 (defn login-button []
-  [:div
+  [:div.login-button
    [:a.button.is-spotify {:href "/auth/login"}
     [:span.icon
      [:i.mdi.mdi-spotify]]
@@ -55,7 +55,7 @@
 
 
 (defn login []
-  [:section.hero.is-black
+  [:section.hero.is-black.login-page.is-fullheight
    [:div.hero-body
     [:div.container.has-text-centered
      [:img.banner {:src "/img/logo_transparent.png"}]
