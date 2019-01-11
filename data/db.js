@@ -8,8 +8,8 @@ export function upsertDoNothing(payload, cs, target = ['id']) {
   return `${insert} ON CONFLICT (${target.join(',')}) DO NOTHING;`
 }
 
-export function upsertDoUpdate(payload, cs, target = ['id']) {
+export function upsertDoUpdate(payload, cs, target = ['id'], skip = undefined) {
   const insert = pgp.helpers.insert(payload, cs)
-  const columns = cs.assignColumns({ from: 'EXCLUDED' })
+  const columns = cs.assignColumns({ from: 'EXCLUDED', skip })
   return `${insert} ON CONFLICT (${target.join(',')}) DO UPDATE SET ${columns};`
 }

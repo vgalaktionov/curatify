@@ -1,8 +1,9 @@
-import { SpotifyClient, SpotifyUserClient } from '../spotify'
-import { upsertUser, all } from '../data/users.mjs'
+import { SpotifyClient, SpotifyUserClient } from '../lib/spotify'
+import { upsertUser, all } from '../data/users'
 import { upsertPlaylists, userPlaylists } from '../data/playlists'
 import { upsertTracks, upsertPlaylistTracks, wipePlaylistTracks } from '../data/tracks'
-import { upsertArtistTracks, upsertArtists, allIds } from '../data/artists.mjs'
+import { upsertArtistTracks, upsertArtists, allIds } from '../data/artists'
+import { updateUserInbox, enrichInbox } from '../data/inbox'
 
 
 function expiring({ expiresAt }) {
@@ -25,7 +26,6 @@ async function ingestUserPlaylists(client, user) {
       id,
       user_id: user.id,
       name,
-      playlist_type: 'ignored',
       images
     })))
   }
@@ -34,7 +34,7 @@ async function ingestUserPlaylists(client, user) {
 
 async function ingestUserPlaylistTracks(client, user) {
   const playlists = await userPlaylists(user.id)
-  await Promise.all(playlists.forEach(async (playlist) => {
+  await Promise.all(playlists.map(async (playlist) => {
     let tracks = []
     for await (const page of client.playlistTracks(playlist.id)) {
       tracks.push(...page.map('track'))
@@ -67,13 +67,15 @@ async function ingestForUser(user) {
   const client = new SpotifyUserClient(user.token)
   await ingestUserPlaylists(client, user)
   await ingestUserPlaylistTracks(client, user)
+  await updateUserInbox(user)
 }
 
 
 async function ingestArtistDetails(client) {
   const ids = await allIds()
-  await Promise.all(ids.inGroupsOf(50).forEach(async chunk => {
+  await Promise.all(ids.inGroupsOf(50).map(async chunk => {
     const artists = await client.artists(chunk)
+    await upsertArtists(artists.map(a => Object.select(a, ['id', 'name', 'genres', 'images'])))
   }))
 }
 
@@ -88,6 +90,7 @@ export async function ingestAll() {
   const token = await SpotifyClient.getToken()
   const genericClient = new SpotifyClient(token)
   await ingestArtistDetails(genericClient)
+  await enrichInbox()
 
   console.timeEnd('ingest')
 }

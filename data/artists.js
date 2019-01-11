@@ -1,6 +1,22 @@
 import { db, pgp, upsertDoNothing, upsertDoUpdate } from './db'
 
-const artistsCs = new pgp.helpers.ColumnSet(['id', 'name'], { table: 'artists' })
+const artistsCs = new pgp.helpers.ColumnSet(
+  [
+    'id',
+    'name',
+    {
+      name: 'images',
+      mod: ':json',
+      def: []
+    },
+    {
+      name: 'genres',
+      mod: ':json',
+      def: []
+    }
+  ],
+  { table: 'artists' }
+)
 const artistTracksCs = new pgp.helpers.ColumnSet(
   ['track_id', 'artist_id'],
   { table: 'artists_tracks' }
