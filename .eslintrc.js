@@ -23,10 +23,10 @@ module.exports = {
     "max-len": ["error", {"code": 100}],
     "comma-dangle": ["error", "never"],
     "comma-spacing": "error",
-    "object-curly-newline": ["error", {
-      "multiline": true,
-      "minProperties": 5
-    }],
+    // "object-curly-newline": ["error", {
+    //   "multiline": true,
+    //   "minProperties": 5
+    // }],
     "no-return-await": "error",
     "no-undef": "error"
   }
