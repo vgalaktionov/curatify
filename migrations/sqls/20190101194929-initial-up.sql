@@ -46,8 +46,8 @@ CREATE TABLE inbox (
   track_id CHARACTER VARYING (32) REFERENCES tracks (id),
   artists jsonb,
   genres jsonb,
-  playlist_affinities jsonb DEFAULT '{}' ::jsonb,
-  status CHARACTER varying (8) DEFAULT 'ignored',
+  playlist_matches CHARACTER VARYING (32) REFERENCES playlists (id),
+  status CHARACTER varying (8) DEFAULT 'unheard',
   CONSTRAINT unq_user_track UNIQUE (user_id,
     track_id)
 );

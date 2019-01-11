@@ -1,9 +1,11 @@
+import consola from 'consola'
 import { SpotifyClient, SpotifyUserClient } from '../lib/spotify'
-import { upsertUser, all } from '../data/users'
+import { upsertUser, allUsers } from '../data/users'
 import { upsertPlaylists, userPlaylists } from '../data/playlists'
 import { upsertTracks, upsertPlaylistTracks, wipePlaylistTracks } from '../data/tracks'
 import { upsertArtistTracks, upsertArtists, allIds } from '../data/artists'
 import { updateUserInbox, enrichInbox } from '../data/inbox'
+import { timeAsyncCall } from '../lib/timing'
 
 
 function expiring({ expiresAt }) {
@@ -62,7 +64,7 @@ async function ingestTrackArtists(tracks) {
 
 
 async function ingestForUser(user) {
-  console.info(`ingesting for user ${user.id}...`)
+  consola.info(`ingesting for user ${user.id}...`)
   user = await updateUserToken(user)
   const client = new SpotifyUserClient(user.token)
   await ingestUserPlaylists(client, user)
@@ -81,17 +83,18 @@ async function ingestArtistDetails(client) {
 
 
 export async function ingestAll() {
-  const users = await all()
-  console.info('ingesting for all users...')
-  console.time('ingest')
+  await timeAsyncCall(
+    'ingesting for all users...',
+    async () => {
+      const users = await allUsers()
+      await Promise.all(users.map(async u => ingestForUser(u)))
 
-  await Promise.all(users.map(async u => ingestForUser(u)))
-
-  const token = await SpotifyClient.getToken()
-  const genericClient = new SpotifyClient(token)
-  await ingestArtistDetails(genericClient)
-  await enrichInbox()
-
-  console.timeEnd('ingest')
+      const token = await SpotifyClient.getToken()
+      const genericClient = new SpotifyClient(token)
+      await ingestArtistDetails(genericClient)
+      await enrichInbox()
+    },
+    'ingested all'
+  )
 }
 

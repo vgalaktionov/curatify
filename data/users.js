@@ -9,6 +9,6 @@ export async function upsertUser(user) {
   await db.none(upsertDoUpdate(user, cs))
 }
 
-export async function all() {
+export async function allUsers() {
   return db.manyOrNone('SELECT * FROM users;')
 }

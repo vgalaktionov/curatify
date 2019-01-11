@@ -1,11 +1,6 @@
 import { db } from './db'
 
-// with aff as (select (jsonb_each_text(genre_affinities)).*, id as playlist_id from playlists),
-// 	track as (select track_id, jsonb_array_elements_text(genres)::text as genre from inbox where track_id = '7fJjJwGxgbRWZ7wR1sN7gk')
-// select sum(value::numeric), playlist_id
-// from aff
-// inner join track on aff.key = track.genre
-// group by track_id, playlist_id;
+
 export async function updateUserInbox({ id }) {
   await db.none(`
   INSERT INTO inbox
@@ -17,6 +12,10 @@ export async function updateUserInbox({ id }) {
   AND p.playlist_type = 'inbox'
   ON CONFLICT (user_id, track_id) DO NOTHING;
   `, [id])
+}
+
+export async function userUnheardInbox({ id }) {
+  return db.any(`SELECT * FROM inbox WHERE user_id = $1 AND status = 'unheard';`, [id])
 }
 
 export async function enrichInbox() {
@@ -36,4 +35,11 @@ export async function enrichInbox() {
   ) as temp
   where inbox.track_id = temp.track_id;
   `)
+}
+
+
+export async function updateTrackPlaylistMatches(playlistId, trackId, userId) {
+  await db.none(`
+  UPDATE inbox SET playlist_matches = $1 WHERE track_id = $2 AND user_id = $3;
+  `, [playlistId, trackId, userId])
 }
