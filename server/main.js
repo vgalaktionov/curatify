@@ -4,6 +4,7 @@ import cookieSession from 'cookie-session'
 import consola from 'consola'
 import { Nuxt, Builder } from 'nuxt'
 import auth from './auth'
+import api from './api'
 
 const app = express()
 const host = process.env.HOST || '127.0.0.1'
@@ -35,6 +36,7 @@ async function start() {
 
   // API routes
   app.use('/auth', auth)
+  app.use('/api', api)
 
   // Give nuxt middleware to express
   app.use(nuxt.render)

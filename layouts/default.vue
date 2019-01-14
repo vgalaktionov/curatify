@@ -29,9 +29,7 @@
     </nav>
     <section class="section">
       <div class="container">
-        <div class="columns">
-          <nuxt />
-        </div>
+        <nuxt />
       </div>
     </section>
   </div>
@@ -50,6 +48,16 @@ export default {
 <style>
 html, body {
   height: 100%;
+}
+
+.center-table th {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.center-table td {
+    text-align: center;
+    vertical-align: middle;
 }
 </style>
 <style scoped>

@@ -3,23 +3,43 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
+
 const store = () => new Vuex.Store({
 
   state: () => ({
-    user: null
+    user: null,
+    playlists: []
   }),
 
   mutations: {
-    SET_USER(state, user) {
+    setUser(state, user) {
       state.user = user
+    },
+    setPlaylists(state, playlists) {
+      state.playlists = playlists
+    },
+    setPlaylistType(state, { id, type }) {
+      state.playlists = state.playlists.map(p => (
+        { ...p, playlist_type: p.id === id ? type : p.playlist_type }
+      ))
     }
+
   },
 
   actions: {
-    nuxtServerInit ({ commit }, { req }) {
+    async nuxtServerInit ({ commit, dispatch }, { req }) {
       if (req.session && req.session.user) {
-        commit('SET_USER', req.session.user)
+        commit('setUser', req.session.user)
+        return dispatch('getPlaylists')
       }
+    },
+    async getPlaylists({ commit }) {
+      const playlists = await this.$axios.$get('/api/playlists')
+      return commit('setPlaylists', playlists)
+    },
+    async setPlaylistType({ commit }, { id, type }) {
+      await this.$axios.$patch(`/api/playlists/${id}/type`, { playlist_type: type })
+      return commit('setPlaylistType', { id, type })
     }
   }
 

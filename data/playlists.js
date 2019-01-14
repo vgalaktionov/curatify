@@ -82,3 +82,7 @@ export async function updatePlaylistGenreAffinities({ id }) {
   update playlists set genre_affinities = aff.aff from aff where playlists.id = $1;
   `, [id])
 }
+
+export async function updatePlaylistType(id, type) {
+  await db.none(`update playlists set playlist_type = $1 where id = $2`, [type, id])
+}
