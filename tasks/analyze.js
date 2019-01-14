@@ -1,6 +1,6 @@
 import consola from 'consola'
 import {
-  updatePlaylistArtistAffinities, updatePlaylistGenreAffinities, allPlaylists, userPlaylists, userCuratedPlaylists
+  updatePlaylistArtistAffinities, updatePlaylistGenreAffinities, allPlaylists, userCuratedPlaylists
 } from '../data/playlists'
 import { timeAsyncCall } from '../lib/timing'
 import { userUnheardInbox, updateTrackPlaylistMatches } from '../data/inbox'
