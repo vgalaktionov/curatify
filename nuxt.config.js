@@ -27,6 +27,7 @@ module.exports = {
   ** Global CSS
   */
   css: [
+    { src: 'material-design-icons/iconfont/material-icons.css', lang: 'css' }
   ],
 
   /*

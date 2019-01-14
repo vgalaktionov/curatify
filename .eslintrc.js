@@ -28,6 +28,13 @@ module.exports = {
     //   "minProperties": 5
     // }],
     "no-return-await": "error",
-    "no-undef": "error"
+    "no-undef": "error",
+    "vue/max-attributes-per-line": ["error", {
+      "singleline": 3,
+      "multiline": {
+        "max": 1,
+        "allowFirstLine": false
+      }
+    }]
   }
 }
