@@ -1,61 +1,80 @@
 <template>
   <div>
-    <nav
-      class="navbar header has-shadow is-primary"
-      role="navigation"
-      aria-label="main navigation">
+    <nav class="navbar">
       <div class="navbar-brand">
-        <a
-          class="navbar-item"
-          href="/">
-          <img
-            src="~assets/buefy.png"
-            alt="Buefy"
-            height="28">
+        <a href="/" class="navbar-item is-logo">
+          <img src="~/assets/logo_transparent.png">
         </a>
-
-        <div class="navbar-burger">
-          <span/>
-          <span/>
-          <span/>
+      </div>
+      <div class="navbar-menu">
+        <div class="navbar-start">
+          <nuxt-link to="curate" class="navbar-item" active-class="is-active">
+            Curate
+          </nuxt-link>
+          <nuxt-link to="playlists" class="navbar-item" active-class="is-active">
+            Playlists
+          </nuxt-link>
+        </div>
+        <div class="navbar-end">
+          <div class="navbar-item">
+            Welcome, {{ name }}
+          </div>
+          <div class="navbar-item">
+            <a href="/auth/logout" class="button is-primary is-inverted is-outlined">
+              Logout
+            </a>
+          </div>
         </div>
       </div>
     </nav>
-
-    <section class="main-content columns">
-
-      <aside class="column is-2 section">
-        <p class="menu-label is-hidden-touch">General</p>
-        <ul class="menu-list">
-          <li
-            v-for="(item, key) of items"
-            :key="key">
-            <nuxt-link
-              :to="item.to"
-              exact-active-class="is-active">
-              <b-icon :icon="item.icon"/> {{ item.title }}
-            </nuxt-link>
-          </li>
-        </ul>
-      </aside>
-
-      <div class="container column is-10">
-        <nuxt />
+    <section class="section">
+      <div class="container">
+        <div class="columns">
+          <nuxt />
+        </div>
       </div>
-
     </section>
   </div>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      items: [
-        { title: 'Home', icon: 'home', to: { name: 'index' } },
-        { title: 'Inspire', icon: 'lightbulb', to: { name: 'inspire' } }
-      ]
+  computed: {
+    name() {
+      return this.$store.state.user.display_name
     }
   }
 }
 </script>
+
+<style>
+html, body {
+  height: 100%;
+}
+</style>
+<style scoped>
+.__nuxt-error-page {
+  margin-top: 100px;
+}
+
+a.is-logo img {
+  width: 100px;
+}
+
+nav {
+  height: 90px;
+}
+
+.navbar img {
+  max-height: 200px;
+}
+
+.navbar-item.is-logo {
+  position: absolute;
+  left: 50%;
+  margin-left: -64px; /* 50% */
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+</style>

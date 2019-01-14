@@ -27,7 +27,8 @@ module.exports = {
   ** Global CSS
   */
   css: [
-    { src: 'material-design-icons/iconfont/material-icons.css', lang: 'css' }
+    { src: 'material-design-icons/iconfont/material-icons.css', lang: 'css' },
+    { src: 'bulmaswatch/lux/bulmaswatch.min.css', lang: 'css' }
   ],
 
   /*

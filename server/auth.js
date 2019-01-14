@@ -23,7 +23,7 @@ auth.get('/callback', async (req, res) => {
 })
 
 auth.get('/logout', (req, res) => {
-  req.session.destroy()
+  req.session = null
   res.redirect('/')
 })
 
