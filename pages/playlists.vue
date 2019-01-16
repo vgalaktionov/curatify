@@ -27,7 +27,8 @@ export default {
     playlists() {
       return this.$store.state.playlists
     }
-  }
+  },
+  middleware: 'auth'
 }
 </script>
 

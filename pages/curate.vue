@@ -4,6 +4,13 @@
   </div>
 </template>
 
+<script>
+export default {
+  middleware: 'auth'
+}
+</script>
+
+
 <style scoped>
 img.play-spinner {
     padding-top: 0.5rem;

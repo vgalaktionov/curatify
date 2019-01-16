@@ -14,7 +14,10 @@ module.exports = {
       { hid: 'description', name: 'description', content: pkg.description }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel:"icon", type:"image/png", href: '/favicon.png' }
+    ],
+    script: [
+      { src: "https://sdk.scdn.co/spotify-player.js" }
     ]
   },
 
@@ -35,7 +38,8 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    '~/plugins/sugar'
+    '~/plugins/sugar',
+    { src: "~/plugins/spotifyClient", ssr: false }
   ],
 
   /*

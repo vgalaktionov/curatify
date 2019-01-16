@@ -8,7 +8,8 @@ const store = () => new Vuex.Store({
 
   state: () => ({
     user: null,
-    playlists: []
+    playlists: [],
+    playbackState: {}
   }),
 
   mutations: {
@@ -22,6 +23,9 @@ const store = () => new Vuex.Store({
       state.playlists = state.playlists.map(p => (
         { ...p, playlist_type: p.id === id ? type : p.playlist_type }
       ))
+    },
+    setPlaybackState(state, playbackState) {
+      state.playbackState = playbackState
     }
 
   },
