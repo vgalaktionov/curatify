@@ -19,6 +19,9 @@ const store = () => new Vuex.Store({
     setPlaylists(state, playlists) {
       state.playlists = playlists
     },
+    setInbox(state, inbox) {
+      state.inbox = inbox
+    },
     setPlaylistType(state, { id, type }) {
       state.playlists = state.playlists.map(p => (
         { ...p, playlist_type: p.id === id ? type : p.playlist_type }
@@ -34,12 +37,19 @@ const store = () => new Vuex.Store({
     async nuxtServerInit ({ commit, dispatch }, { req }) {
       if (req.session && req.session.user) {
         commit('setUser', req.session.user)
-        return dispatch('getPlaylists')
+        await Promise.all([
+          dispatch('getInbox'),
+          dispatch('getPlaylists')
+        ])
       }
     },
     async getPlaylists({ commit }) {
       const playlists = await this.$axios.$get('/api/playlists')
       return commit('setPlaylists', playlists)
+    },
+    async getInbox({ commit }) {
+      const inbox = await this.$axios.$get('/api/inbox')
+      return commit('setInbox', inbox)
     },
     async setPlaylistType({ commit }, { id, type }) {
       await this.$axios.$patch(`/api/playlists/${id}/type`, { playlist_type: type })

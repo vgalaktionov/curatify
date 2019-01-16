@@ -1,11 +1,13 @@
 import express from 'express'
 import { userPlaylists, updatePlaylistType } from '../data/playlists'
+import { userUnheardInbox } from '../data/inbox'
 
 
 const api = express.Router()
 
-api.get('/inbox', (req, res) => {
-
+api.get('/inbox', async (req, res) => {
+  const inbox = await userUnheardInbox(req.session.user)
+  res.json(inbox)
 })
 
 api.get('/playlists', async (req, res) => {
