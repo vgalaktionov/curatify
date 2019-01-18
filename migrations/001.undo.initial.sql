@@ -11,4 +11,3 @@ DROP TABLE artists_tracks;
 DROP TABLE tracks;
 
 DROP TABLE artists;
-

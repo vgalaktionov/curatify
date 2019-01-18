@@ -11,9 +11,9 @@
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "precommit": "npm run lint",
-    "migrate:new": "npx db-migrate create",
-    "migrate:up": "npx db-migrate up",
-    "migrate:down": "npx db-migrate down",
+    "migrate:new": "node migrate.js create ",
+    "migrate:drop": "node migrate.js drop",
+    "migrate": "node migrate.js migrate ",
     "tasks:dev": "node --harmony tasks/index.js"
   },
   "dependencies": {
@@ -26,8 +26,6 @@
     "camelcase-keys": "^5.0.0",
     "cookie-session": "^2.0.0-beta.3",
     "cross-env": "^5.2.0",
-    "db-migrate": "^0.11.5",
-    "db-migrate-pg": "^0.4.0",
     "esm": "^3.0.84",
     "express": "^4.16.3",
     "express-async-errors": "^3.1.1",
@@ -35,6 +33,7 @@
     "nuxt": "^2.0.0",
     "nuxt-buefy": "^0.2.1",
     "pg-promise": "^8.5.4",
+    "postgrator": "^3.7.0",
     "snakecase-keys": "^2.1.0",
     "sugar": "^2.0.6"
   },

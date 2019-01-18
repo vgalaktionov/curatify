@@ -51,4 +51,3 @@ CREATE TABLE inbox (
   CONSTRAINT unq_user_track UNIQUE (user_id,
     track_id)
 );
-
