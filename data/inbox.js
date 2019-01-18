@@ -18,6 +18,15 @@ export async function userUnheardInbox({ id }) {
   return db.any(`SELECT * FROM inbox WHERE user_id = $1 AND status = 'unheard';`, [id])
 }
 
+export async function userUnheardInboxRich({ id }) {
+  return db.any(`
+  SELECT *, t.name FROM inbox i
+    INNER JOIN tracks t ON t.id = i.track_id
+  WHERE i.user_id = $1
+  AND i.status = 'unheard';
+  `, [id])
+}
+
 export async function enrichInbox() {
   await db.none(`
   update inbox
@@ -27,6 +36,7 @@ export async function enrichInbox() {
     select
       i.track_id,
       json_agg(artist_id) as artists,
+      json_agg(a.name) as artist_names,
       json_array_elements(json_agg(a.genres)) as genres
     from inbox i
     inner join artists_tracks at on at.track_id = i.track_id
