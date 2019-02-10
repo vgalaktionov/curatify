@@ -1,14 +1,18 @@
-import { db, pgp, upsertDoUpdate } from './db'
+import * as db from './db'
+import sql from 'pg-template-tag'
 
 
-const cs = new pgp.helpers.ColumnSet(
-  ['id', 'email', 'display_name', 'token:json'], { table: 'users' }
-)
-
-export async function upsertUser(user) {
-  await db.none(upsertDoUpdate(user, cs))
+export async function upsertUser({ id, email, display_name, token }) {
+  await db.query(sql `
+    INSERT INTO users (id, email, display_name, token)
+    VALUES (${id}, ${email}, ${display_name}, ${token}::jsonb)
+    ON CONFLICT DO UPDATE SET
+      email = EXCLUDED.email,
+      display_name = EXCLUDED.display_name,
+      token = EXCLUDED.token;
+  `)
 }
 
 export async function allUsers() {
-  return db.manyOrNone('SELECT * FROM users;')
+  return db.query(sql `SELECT * FROM users;`)
 }

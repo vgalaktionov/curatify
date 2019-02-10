@@ -1,37 +1,35 @@
-import { db, pgp, upsertDoNothing, upsertDoUpdate } from './db'
-
-const artistsCs = new pgp.helpers.ColumnSet(
-  [
-    'id',
-    'name',
-    {
-      name: 'images',
-      mod: ':json',
-      def: []
-    },
-    {
-      name: 'genres',
-      mod: ':json',
-      def: []
-    }
-  ],
-  { table: 'artists' }
-)
-const artistTracksCs = new pgp.helpers.ColumnSet(
-  ['track_id', 'artist_id'],
-  { table: 'artists_tracks' }
-)
-
+import * as db from './db'
+import sql from 'pg-template-tag'
 
 export async function upsertArtists(artists) {
-  await db.none(upsertDoUpdate(artists, artistsCs))
+  const values = sql.join(artists.map(({ id, name, genres = {}, images = {} }) => {
+    return sql `(${id}, ${name}, ${genres}::jsonb, ${images}::jsonb)`
+  }), ', ')
+
+  await db.query(sql `
+    insert into artists (track_id, artist_id)
+      values ${values}
+    on conflict (id) do update set
+      name = EXCLUDED.name,
+      genres = EXCLUDED.genres,
+      images = EXCLUDED.images;
+  `)
 }
 
 export async function upsertArtistTracks(artistTracks) {
-  await db.none(upsertDoNothing(artistTracks, artistTracksCs, ['track_id', 'artist_id']))
+  const values = sql.join(artistTracks.map(({
+    track_id,
+    artist_id
+  }) => sql `(${track_id}, ${artist_id})`), ', ')
+
+  await db.query(sql `
+    insert into artists_tracks (track_id, artist_id)
+      values ${values}
+    on conflict (track_id, artist_id) do nothing;
+  `)
 }
 
 export async function allIds() {
-  const rows = await db.any("select id from artists;")
+  const rows = await db.query(sql `select id from artists;`)
   return rows.map('id')
 }

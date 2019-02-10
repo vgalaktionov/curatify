@@ -32,7 +32,9 @@
     "material-design-icons": "^3.0.1",
     "nuxt": "^2.0.0",
     "nuxt-buefy": "^0.2.1",
+    "pg": "^7.8.0",
     "pg-promise": "^8.5.4",
+    "pg-template-tag": "^0.1.2",
     "postgrator": "^3.7.0",
     "snakecase-keys": "^2.1.0",
     "sugar": "^2.0.6"

@@ -1,88 +1,77 @@
-import { db, pgp, upsertDoUpdate } from './db'
-
-const cs = new pgp.helpers.ColumnSet(
-  [
-    'id',
-    'user_id',
-    'name',
-    'images:json',
-    {
-      name: 'artist_affinities',
-      mod: ':json',
-      def: {}
-    },
-    {
-      name: 'genre_affinities',
-      mod: ':json',
-      def: {}
-    },
-    {
-      name: 'playlist_type',
-      def: 'ignored'
-    }
-  ],
-  { table: 'playlists' }
-)
+import * as db from './db'
+import sql from 'pg-template-tag'
 
 export async function upsertPlaylists(playlists) {
-  await db.none(upsertDoUpdate(playlists, cs, ['id'], 'playlist_type'))
+  const values = sql.join(playlists.map(
+    ({ id, user_id, name, images }) => sql `(${id}, ${user_id}, ${name}, ${images}::jsonb)`),
+    ', '
+  )
+
+  await db.query(sql `
+    INSERT INTO playlists (id, user_id, name, images)
+      VALUES ${values}
+    ON CONFLICT (id) DO UPDATE SET
+      name = EXCLUDED.name,
+      images =  EXCLUDED.images;
+  `)
 }
 
 export async function userPlaylists(userId) {
-  return db.any('SELECT * FROM playlists WHERE user_id = $1;', [userId])
+  return db.query(sql `SELECT * FROM playlists WHERE user_id = ${userId};`)
 }
 
 export async function userCuratedPlaylists(userId) {
-  return db.any(
-    `SELECT * FROM playlists WHERE user_id = $1 AND playlist_type = 'curated';`, [userId]
+  return db.query(
+    sql `SELECT * FROM playlists WHERE user_id = ${userId} AND playlist_type = 'curated';`
   )
 }
 
 export async function allPlaylists() {
-  return db.any('SELECT * FROM playlists;')
+  return db.query(sql `SELECT * FROM playlists;`)
 }
 
 export async function updatePlaylistArtistAffinities({ id }) {
-  await db.none(`
-  with aff as (
-		select jsonb_object_agg(temp.artist_id, temp.count) as aff
-		from (
-      select
-        art.artist_id,
-        count(art.track_id) /
-          (select count(*) from playlists_tracks where playlist_id = $1)::numeric as count
-      from artists a
-        inner join artists_tracks art on art.artist_id = a.id
-        inner join playlists_tracks pt on pt.track_id = art.track_id
-        inner join playlists p on pt.playlist_id = p.id
-      where p.id = $1
-      group by a.name, art.artist_id
-    ) as temp
-	)
-  update playlists set artist_affinities = aff.aff from aff where playlists.id = $1;
-  `, [id])
+  await db.query(sql `
+    WITH aff AS (
+      SELECT jsonb_object_agg(temp.artist_id, temp.count) as aff
+      FROM (
+        SELECT
+          art.artist_id,
+          count(art.track_id) /
+            (SELECT count(*) FROM playlists_tracks WHERE playlist_id = ${id})::numeric AS count
+        FROM artists a
+          INNER JOIN artists_tracks art ON art.artist_id = a.id
+          INNER JOIN playlists_tracks pt ON pt.track_id = art.track_id
+          INNER JOIN playlists p ON pt.playlist_id = p.id
+        WHERE p.id = ${id}
+        GROUP BY a.name, art.artist_id
+      ) AS temp
+    )
+    UPDATE playlists SET artist_affinities = aff.aff FROM aff WHERE playlists.id = ${id};
+  `)
 }
 
 export async function updatePlaylistGenreAffinities({ id }) {
-  await db.none(`
-  with aff as (
-    select jsonb_object_agg(agg.genre, agg.count) as aff
-    from (select
-      genre,
-      count(*) / (select count(*) from playlists_tracks where playlist_id = $1)::numeric as count
-      from (
-        select jsonb_array_elements_text(a.genres) as genre from artists a
-          inner join artists_tracks art on art.artist_id = a.id
-          inner join playlists_tracks pt on pt.track_id = art.track_id
-          inner join playlists p on pt.playlist_id = p.id
-        where p.id = $1
-      ) as temp
-      group by temp.genre
-    ) as agg)
-  update playlists set genre_affinities = aff.aff from aff where playlists.id = $1;
-  `, [id])
+  await db.query(sql `
+    WITH playlist_track_count AS (SELECT count(*) FROM playlists_tracks WHERE playlist_id = ${id}),
+    aff AS (
+      SELECT jsonb_object_agg(agg.genre, agg.count) AS aff
+      FROM (
+        SELECT
+          genre, count(*) / playlist_track_count::numeric AS count
+        FROM (
+          SELECT jsonb_array_elements_text(a.genres) AS genre FROM artists a
+            INNER JOIN artists_tracks art ON art.artist_id = a.id
+            INNER JOIN playlists_tracks pt ON pt.track_id = art.track_id
+            INNER JOIN playlists p ON pt.playlist_id = p.id
+          WHERE p.id = ${id}
+        ) AS temp
+        GROUP BY temp.genre
+      ) AS agg)
+    UPDATE playlists SET genre_affinities = aff.aff FROM aff WHERE playlists.id = ${id};
+  `)
 }
 
 export async function updatePlaylistType(id, type) {
-  await db.none(`update playlists set playlist_type = $1 where id = $2`, [type, id])
+  await db.query(sql `update playlists set playlist_type = ${type} where id = ${id};`)
 }
