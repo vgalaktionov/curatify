@@ -13,7 +13,7 @@ function expiring({ expiresAt }) {
 }
 
 
-async function updateUserToken(user) {
+export async function updateUserToken(user) {
   if (expiring(user.token)) {
     user.token = await new SpotifyUserClient(user.token).refreshToken()
     await upsertUser(user)

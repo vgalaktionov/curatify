@@ -39,7 +39,8 @@ module.exports = {
   */
   plugins: [
     '~/plugins/sugar',
-    { src: "~/plugins/spotifyClient", ssr: false }
+    { src: "~/plugins/spotifyClient", ssr: false },
+    { src: "~/plugins/pollUser", ssr: false }
   ],
 
   /*

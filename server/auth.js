@@ -1,6 +1,7 @@
 import express from 'express'
 import { upsertUser } from '../data/users'
 import { SpotifyUserClient } from '../lib/spotify'
+import { updateUserToken } from '../tasks/ingest'
 
 const auth = express.Router()
 
@@ -24,9 +25,14 @@ auth.get('/logout', (req, res) => {
   res.redirect('/')
 })
 
-auth.get('/me', (req, res) => {
-  const { user } = req.session
-  user ? res.json(user) : res.statusCode(204)
+auth.get('/me', async (req, res) => {
+  let { user } = req.session
+  if (user) {
+    user = await updateUserToken(user)
+    res.json(user)
+  } else {
+    res.statusCode(204)
+  }
 })
 
 export default auth
