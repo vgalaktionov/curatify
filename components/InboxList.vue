@@ -13,8 +13,8 @@
         <tr v-for="track in inbox" :key="track.id" >
           <td>{{ track.name }}</td>
           <td>
-            <b-icon v-if="track.liked" icon="thumb-up"/>
-            <b-icon v-else-if="track.disliked" icon="thumb-down"/>
+            <b-icon v-if="track.status === 'liked'" icon="thumb-up"/>
+            <b-icon v-else-if="track.status === 'disliked'" icon="thumb-down"/>
             <span v-else/>
           </td>
           <td>

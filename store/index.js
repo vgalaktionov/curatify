@@ -8,6 +8,7 @@ const store = () => new Vuex.Store({
 
   state: () => ({
     user: null,
+    ready: false,
     playlists: [],
     inbox: [],
     playbackState: {
@@ -58,8 +59,13 @@ const store = () => new Vuex.Store({
     },
     setPlaybackState(state, playbackState) {
       state.playbackState = playbackState || state.playbackState
+    },
+    setReady(state, ready) {
+      state.ready = ready
+    },
+    setTrackStatus(state, { trackId, status }) {
+      state.inbox = state.inbox.map(t => t.id === trackId ? { ...t, status } : t)
     }
-
   },
 
   actions: {

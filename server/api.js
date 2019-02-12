@@ -1,6 +1,7 @@
 import express from 'express'
 import { userPlaylists, updatePlaylistType } from '../data/playlists'
-import { userUnheardInboxRich } from '../data/inbox'
+import { userUnheardInboxRich, updateTrackStatus } from '../data/inbox'
+import { SpotifyUserClient } from '../lib/spotify'
 
 
 const api = express.Router()
@@ -20,12 +21,14 @@ api.patch('/playlists/:id/type', async (req, res) => {
   res.sendStatus(200)
 })
 
-api.put('/tracks/:id/like', (req, res) => {
-
+api.put('/tracks/:id/like', async (req, res) => {
+  await updateTrackStatus(req.params.id, req.session.user.id, 'liked')
+  res.sendStatus(200)
 })
 
-api.put('/tracks/:id/dislike', (req, res) => {
-
+api.put('/tracks/:id/dislike', async (req, res) => {
+  await updateTrackStatus(req.params.id, req.session.user.id, 'disliked')
+  res.sendStatus(200)
 })
 
 export default api

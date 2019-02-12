@@ -49,7 +49,7 @@ export default {
   },
   computed: {
     playerReady() {
-      return process.client ? window.player && window.player._options.id : false
+      return this.$store.state.ready
     },
     trackDuration() {
       return this.$store.state.playbackState.duration
@@ -62,11 +62,17 @@ export default {
     this.$spotify = new SpotifyUserClient(this.$store.state.user.token)
   },
   methods: {
-    likeTrack() {
-      console.log("liked")
+    async likeTrack() {
+      const track = this.$store.getters.currentTrack
+      await this.$axios.put(`/api/tracks/${track.id}/like`)
+      await this.$spotify.addTrackToPlaylist(track.id, track.playlist_matches)
+      this.$store.commit('setTrackStatus', { trackId: track.id, status: 'liked' })
     },
-    dislikeTrack() {
-      console.log("disliked")
+    async dislikeTrack() {
+      const track = this.$store.getters.currentTrack
+      await this.$axios.put(`/api/tracks/${track.id}/dislike`)
+      await this.nextTrack()
+      this.$store.commit('setTrackStatus', { trackId: track.id, status: 'disliked' })
     },
     async nextTrack() {
       await window.player.nextTrack()

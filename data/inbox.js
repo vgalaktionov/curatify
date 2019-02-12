@@ -62,3 +62,11 @@ export async function updateTrackPlaylistMatches(playlistId, trackId, userId) {
     WHERE track_id = ${trackId} AND user_id = ${userId};
   `)
 }
+
+export async function updateTrackStatus(trackId, userId, status) {
+  await db.query(sql `
+    UPDATE inbox SET
+      status = ${status}
+    WHERE track_id = ${trackId} AND user_id = ${userId};
+  `)
+}

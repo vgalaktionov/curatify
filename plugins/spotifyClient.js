@@ -19,11 +19,13 @@ export default function({ store }) {
       // Ready
       player.addListener('ready', ({ device_id }) => {
         console.log('Ready with Device ID', device_id)
+        store.commit('setReady', true)
       })
 
       // Not Ready
       player.addListener('not_ready', ({ device_id }) => {
         console.log('Device ID has gone offline', device_id)
+        store.commit('setReady', false)
       })
 
       // Connect to the player!
