@@ -1,9 +1,8 @@
 import * as db from './db'
-import sql from 'pg-template-tag'
-
+import sql, { join } from 'pg-template-tag'
 
 export async function upsertTracks(tracks) {
-  const values = sql.join(tracks.map(({ id, name }) => sql `(${id}, ${name})`), ', ')
+  const values = join(tracks.map(({ id, name }) => sql `(${id}, ${name})`), ', ')
 
   await db.query(sql `
     INSERT INTO tracks (id, name)
@@ -13,7 +12,7 @@ export async function upsertTracks(tracks) {
 }
 
 export async function upsertPlaylistTracks(playlistTracks) {
-  const values = sql.join(
+  const values = join(
     playlistTracks.map(({ track_id, playlist_id }) => sql `(${track_id}, ${playlist_id})`), ', '
   )
 

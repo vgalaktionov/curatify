@@ -47,9 +47,7 @@ export default {
     }
   },
   data() {
-    return {
-      types: ['ignored', 'curated', 'inbox']
-    }
+    return { types: ['ignored', 'curated', 'inbox'] }
   },
   methods: {
     setPlaylistType(e) {

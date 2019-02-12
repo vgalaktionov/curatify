@@ -5,6 +5,8 @@ import consola from 'consola'
 import { Nuxt, Builder } from 'nuxt'
 import auth from './auth'
 import api from './api'
+import { ingestAll } from '../tasks/ingest'
+import { analyzeAll } from '../tasks/analyze'
 
 const app = express()
 const host = process.env.HOST || '127.0.0.1'
@@ -49,4 +51,15 @@ async function start() {
     badge: true
   })
 }
+
+async function allTasks(params) {
+  console.info('Running periodic tasks...')
+  await ingestAll()
+  await analyzeAll()
+}
+
+// Run the fetching tasks
+// setImmediate(allTasks)
+setInterval(allTasks, 1000 * 60)
+
 start()

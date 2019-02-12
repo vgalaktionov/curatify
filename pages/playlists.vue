@@ -20,9 +20,7 @@
 <script>
 import PlaylistRow from '~/components/PlaylistRow'
 export default {
-  components: {
-    PlaylistRow
-  },
+  components: { PlaylistRow },
   computed: {
     playlists() {
       return this.$store.state.playlists

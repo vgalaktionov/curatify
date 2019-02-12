@@ -68,8 +68,11 @@ async function ingestForUser(user) {
   user = await updateUserToken(user)
   const client = new SpotifyUserClient(user.token)
   await ingestUserPlaylists(client, user)
+  consola.info(`ingested playlists for user ${user.id}...`)
   await ingestUserPlaylistTracks(client, user)
+  consola.info(`ingested playlist tracks for user ${user.id}...`)
   await updateUserInbox(user)
+  consola.info(`updated inbox for user ${user.id}...`)
 }
 
 

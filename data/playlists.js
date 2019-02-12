@@ -1,9 +1,10 @@
 import * as db from './db'
-import sql from 'pg-template-tag'
+import sql, { join } from 'pg-template-tag'
 
 export async function upsertPlaylists(playlists) {
-  const values = sql.join(playlists.map(
-    ({ id, user_id, name, images }) => sql `(${id}, ${user_id}, ${name}, ${images}::jsonb)`),
+  const values = join(playlists.map(({ id, user_id, name, images }) => sql `
+      (${id}, ${user_id}, ${name}, ${JSON.stringify(images)})
+    `),
     ', '
   )
 
@@ -17,17 +18,20 @@ export async function upsertPlaylists(playlists) {
 }
 
 export async function userPlaylists(userId) {
-  return db.query(sql `SELECT * FROM playlists WHERE user_id = ${userId};`)
+  const res = await db.query(sql `SELECT * FROM playlists WHERE user_id = ${userId};`)
+  return res.rows
 }
 
 export async function userCuratedPlaylists(userId) {
-  return db.query(
+  const res = await db.query(
     sql `SELECT * FROM playlists WHERE user_id = ${userId} AND playlist_type = 'curated';`
   )
+  return res.rows
 }
 
 export async function allPlaylists() {
-  return db.query(sql `SELECT * FROM playlists;`)
+  const res = await db.query(sql `SELECT * FROM playlists;`)
+  return res.rows
 }
 
 export async function updatePlaylistArtistAffinities({ id }) {
@@ -53,12 +57,12 @@ export async function updatePlaylistArtistAffinities({ id }) {
 
 export async function updatePlaylistGenreAffinities({ id }) {
   await db.query(sql `
-    WITH playlist_track_count AS (SELECT count(*) FROM playlists_tracks WHERE playlist_id = ${id}),
-    aff AS (
+    WITH aff AS (
       SELECT jsonb_object_agg(agg.genre, agg.count) AS aff
       FROM (
         SELECT
-          genre, count(*) / playlist_track_count::numeric AS count
+          genre, count(*) /
+            (SELECT count(*) FROM playlists_tracks WHERE playlist_id = ${id})::numeric AS count
         FROM (
           SELECT jsonb_array_elements_text(a.genres) AS genre FROM artists a
             INNER JOIN artists_tracks art ON art.artist_id = a.id

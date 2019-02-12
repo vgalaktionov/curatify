@@ -1,15 +1,15 @@
 import * as db from './db'
-import sql from 'pg-template-tag'
+import sql, { join } from 'pg-template-tag'
 
 export async function upsertArtists(artists) {
-  const values = sql.join(artists.map(({ id, name, genres = {}, images = {} }) => {
-    return sql `(${id}, ${name}, ${genres}::jsonb, ${images}::jsonb)`
+  const values = join(artists.map(({ id, name, genres = {}, images = {} }) => {
+    return sql `(${id}, ${name}, ${JSON.stringify(genres)}, ${JSON.stringify(images)})`
   }), ', ')
 
   await db.query(sql `
-    insert into artists (track_id, artist_id)
-      values ${values}
-    on conflict (id) do update set
+    INSERT INTO artists (id, name, genres, images)
+      VALUES ${values}
+    ON CONFLICT (id) DO UPDATE SET
       name = EXCLUDED.name,
       genres = EXCLUDED.genres,
       images = EXCLUDED.images;
@@ -17,19 +17,19 @@ export async function upsertArtists(artists) {
 }
 
 export async function upsertArtistTracks(artistTracks) {
-  const values = sql.join(artistTracks.map(({
+  const values = join(artistTracks.map(({
     track_id,
     artist_id
   }) => sql `(${track_id}, ${artist_id})`), ', ')
 
   await db.query(sql `
-    insert into artists_tracks (track_id, artist_id)
-      values ${values}
-    on conflict (track_id, artist_id) do nothing;
+    INSERT INTO artists_tracks (track_id, artist_id)
+      VALUES ${values}
+    ON CONFLICT (track_id, artist_id) DO NOTHING;
   `)
 }
 
 export async function allIds() {
-  const rows = await db.query(sql `select id from artists;`)
-  return rows.map('id')
+  const res = await db.query(sql `SELECT id FROM artists;`)
+  return res.rows.map('id')
 }

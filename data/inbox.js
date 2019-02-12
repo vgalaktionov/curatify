@@ -8,7 +8,7 @@ export async function updateUserInbox({ id }) {
     (user_id, track_id)
     SELECT p.user_id, pt.track_id
     FROM playlists_tracks pt
-    INNER JOIN playlists p on p.id = pt.playlist_id
+    INNER JOIN playlists p ON p.id = pt.playlist_id
     WHERE p.user_id = ${id}
     AND p.playlist_type = 'inbox'
     ON CONFLICT (user_id, track_id) DO NOTHING;
@@ -16,16 +16,21 @@ export async function updateUserInbox({ id }) {
 }
 
 export async function userUnheardInbox({ id }) {
-  return db.query(sql `SELECT * FROM inbox WHERE user_id = ${id} AND status = 'unheard';`)
+  const res = await db.query(
+    sql `SELECT * FROM inbox WHERE user_id = ${id} AND status = 'unheard';`
+  )
+  return res.rows
 }
 
 export async function userUnheardInboxRich({ id }) {
-  return db.query(sql `
+  const res = await db.query(sql `
     SELECT *, t.name FROM inbox i
       INNER JOIN tracks t ON t.id = i.track_id
     WHERE i.user_id = ${id}
     AND i.status = 'unheard';
   `)
+
+  return res.rows
 }
 
 export async function enrichInbox() {

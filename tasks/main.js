@@ -1,7 +1,2 @@
-import { ingestAll } from './ingest'
-import { analyzeAll } from './analyze';
-
-(async () => {
-  await ingestAll()
-  await analyzeAll()
-})()
+export * from './ingest'
+export * from './analyze'
