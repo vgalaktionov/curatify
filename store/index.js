@@ -9,8 +9,37 @@ const store = () => new Vuex.Store({
   state: () => ({
     user: null,
     playlists: [],
-    playbackState: {}
+    inbox: [],
+    playbackState: {
+      paused: true,
+      duration: 0,
+      position: 0,
+      track_window: {
+        current_track: {
+          id: "",
+          linked_from_uri: "",
+          album: {
+            images: [
+              { url: '', height: 0 }
+            ]
+          }
+        }
+      }
+    }
   }),
+
+  getters: {
+    currentTrack: (state) => {
+      const track = state.playbackState.track_window.current_track
+      track.linked_from_uri = track.linked_from_uri || ""
+      return {
+        ...track,
+        ...state.inbox.find(t => {
+          return [track.id, track.linked_from_uri.remove('spotify:track:')].includes(t.id)
+        }) || {}
+      }
+    }
+  },
 
   mutations: {
     setUser(state, user) {
@@ -28,7 +57,7 @@ const store = () => new Vuex.Store({
       ))
     },
     setPlaybackState(state, playbackState) {
-      state.playbackState = playbackState
+      state.playbackState = playbackState || state.playbackState
     }
 
   },

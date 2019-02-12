@@ -20,7 +20,7 @@
         </button>
       </div>
       <div class="column is-one-fifth">
-        <button class="playback" @click="playOrPause">
+        <button :disabled="!playerReady" class="playback" @click="playOrPause">
           <b-icon :icon="playing ? 'pause' : 'play'" size="is-large"/>
         </button>
       </div>
@@ -40,22 +40,23 @@
 
 <script>
 import { SpotifyUserClient } from "~/lib/spotify"
+import CurrentlyPlaying from '~/components/CurrentlyPlaying'
 
 export default {
+  components: { CurrentlyPlaying },
+  data() {
+    return { playing: false }
+  },
   computed: {
-    playing() {
-      // return !this.$store.state.playbackState.paused
-      return false
+    playerReady() {
+      return process.client ? window.player && window.player._options.id : false
+    },
+    trackDuration() {
+      return this.$store.state.playbackState.duration
+    },
+    trackPosition() {
+      return this.$store.state.playbackState.position
     }
-    // },
-    // trackDuration() {
-    //   const playback = this.$store.state.playbackState
-    //   return playback && playback.track_window.current_track.trackDuration
-    // },
-    // trackPosition() {
-    //   const playback = this.$store.state.playbackState
-    //   return playback && playback.track_window.current_track.trackPosition
-    // }
   },
   created() {
     this.$spotify = new SpotifyUserClient(this.$store.state.user.token)
@@ -74,14 +75,31 @@ export default {
       await window.player.previousTrack()
     },
     async playOrPause() {
-      if (this.playing) {
-        await this.$spotify.pause()
+      this.playing = !this.playing
+      if (!this.playing) {
+        await this.$spotify.pause(window.player._options.id)
       } else {
         await this.$spotify.play(
-          this.$store.state.inbox.to(11).map(it => "spotify:track:" + it.id)
+          this.$store.state.inbox.to(11).map(it => "spotify:track:" + it.id),
+          window.player._options.id
         )
       }
+      setTimeout(() => {
+        this.playing = !this.$store.state.playbackState.paused
+      }, 1000)
     }
   }
 }
 </script>
+
+<style scoped>
+.playback {
+    font-size: 40pt;
+    border-color: transparent;
+    outline: none;
+}
+
+.playback:hover {
+    color: rgb(129, 135, 141);
+}
+</style>

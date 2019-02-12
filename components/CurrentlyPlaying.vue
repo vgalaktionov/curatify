@@ -1,24 +1,38 @@
+<template>
+  <div class="column is-12 has-text-centered currently-playing">
+    <img :src="imageUrl">
+    <h5 class="is-size-5">{{ track.name }}</h5>
+    <p v-if="track.artists">{{ track.artist_names.join(', ') }}</p>
+    <p v-if="playing" class="is-size-7">matches: {{ matchingPlaylist }}</p>
+  </div>
+</template>
 
-// (defn currently-playing []
-//   (let [track-info (current-track-info)
-//         track-name (get track-info "name")
-//         track-id (get track-info "id")
-//         track-playing (not (nil? track-info))
-//         inbox-track (lookup-track-id-in-inbox track-id)
-//         matching-playlist (if (and track-playing inbox-track)
-  (->> (or (:playlist_affinities inbox-track) {})
-//                                                                    (apply max-key val)
-//                                                                    (first)
-//                                                                    (name)
-//                                                                    (lookup-playlist)))
-//         track-artists (->> (get track-info "artists")
-//                            (map #(get % "name"))
-//                            (str/join ", "))
-//         large-image (->>
-(get-in @playback-status ["track_window" "current_track" "album" "images"])
-//                          (apply max-key :height))]
-//     [:div.column.is-12.has-text-centered.currently-playing
-//      [:img {:src (get large-image "url")}]
-//      [:h5.is-size-5 track-name]
-//      [:p track-artists]
-//      (if track-playing [:p.is-size-7 (str "matches: " (:name matching-playlist))])]))
+<script>
+export default {
+  computed: {
+    playing() {
+      return !this.$store.state.playbackState.paused
+    },
+    matchingPlaylist() {
+      return this.$store.state.playlists.find(p => p.id === this.track.playlist_matches).name
+    },
+    imageUrl() {
+      return this.track.album.images.max('height').url
+    },
+    track() {
+      return this.$store.getters.currentTrack
+    }
+  }
+}
+</script>
+
+<style scoped>
+.currently-playing {
+    height: 380px;
+    min-height: 380px;
+}
+
+.currently-playing img {
+    height: 280px;
+}
+</style>

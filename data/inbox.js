@@ -37,7 +37,8 @@ export async function enrichInbox() {
   await db.query(sql `
     UPDATE inbox
     SET artists = temp.artists,
-      genres = temp.genres
+      genres = temp.genres,
+      artist_names = temp.artist_names
     FROM (
       SELECT
         i.track_id,

@@ -1,7 +1,7 @@
 <template>
   <div>
     <h4 class="is-size-4">INBOX TRACKS</h4>
-    <table class="table column is-4 center-table">
+    <table class="table column is-12 center-table">
       <thead>
         <tr>
           <th>name</th>
@@ -18,7 +18,7 @@
             <span v-else/>
           </td>
           <td>
-            <span v-if="track.playing" class="icon is-small">
+            <span v-if="nowPlaying(track)" class="icon is-small">
               <img src="/playing.svg" class="play-spinner">
             </span>
           </td>
@@ -33,7 +33,23 @@ export default {
   computed: {
     inbox() {
       return this.$store.state.inbox ? this.$store.state.inbox.first(10) : []
+    },
+    currentTrack() {
+      return this.$store.getters.currentTrack
+    }
+  },
+  methods: {
+    nowPlaying(track) {
+      return this.currentTrack ? [
+        this.currentTrack.id, this.currentTrack.linked_from_uri.remove('spotify:track:')
+      ].includes(track.id) : false
     }
   }
 }
 </script>
+
+<style scoped>
+img.play-spinner {
+    padding-top: 0.5rem;
+}
+</style>
