@@ -14,7 +14,8 @@
     "migrate:new": "node migrate.js create ",
     "migrate:drop": "node migrate.js drop",
     "migrate": "node migrate.js migrate ",
-    "tasks:dev": "node --harmony tasks/index.js"
+    "tasks:dev": "node --harmony tasks/index.js",
+    "deploy": "sh ./deploy.sh"
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.0.0",

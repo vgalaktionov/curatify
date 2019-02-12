@@ -1,0 +1,39 @@
+version: '3'
+
+volumes:
+  db-data:
+    external: false
+
+services:
+  web:
+    image: registry.gitlab.com/vgalaktionov/curatify
+    build:
+      context: .
+    depends_on:
+      - db
+    env_file:
+      - .env-prod
+    command: sh -c "npm run migrate && npm run start"
+
+  db:
+    image: postgres:11-alpine
+    volumes:
+      - db-data:/var/lib/postgresql/db-data
+    ports:
+      - 5432:5432
+    env_file:
+      - .env-prod
+
+  https-portal:
+    image: steveltn/https-portal:1
+    ports:
+      - 80:80
+      - 443:443
+    links:
+      - web
+    restart: always
+    environment:
+      DOMAINS: 'curatify.xyz -> http://web:5000'
+      STAGE: 'production'
+#      FORCE_RENEW: 'true'
+      GZIP: 'on'
