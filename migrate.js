@@ -1,6 +1,7 @@
-require('dotenv').config()
 const Postgrator = require('postgrator')
 const fs = require('fs')
+
+console.info(`DATABASE_URL: ${process.env.DATABASE_URL}`)
 
 const postgrator = new Postgrator({
   driver: 'pg',

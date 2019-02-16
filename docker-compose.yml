@@ -11,9 +11,11 @@ services:
       context: .
     depends_on:
       - db
+    ports:
+      - 5000:5000
     env_file:
       - .env-prod
-    command: sh -c "npm run migrate && npm run start"
+    command: sh -c "npm run migrate:prod && npm run start"
 
   db:
     image: postgres:11-alpine

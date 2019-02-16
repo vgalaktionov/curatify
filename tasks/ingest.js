@@ -41,7 +41,7 @@ async function ingestUserPlaylistTracks(client, user) {
     for await (const page of client.playlistTracks(playlist.id)) {
       tracks.push(...page.map('track'))
     }
-    tracks = tracks.unique('id').filter(t => !!t.id)
+    tracks = tracks.filter(t => t !== null).filter(t => !!t.id).unique('id')
     await upsertTracks(tracks.map(track => ({ id: track.id, name: track.name })))
     await wipePlaylistTracks(playlist.id)
     await upsertPlaylistTracks(tracks.map(t => ({ track_id: t.id, playlist_id: playlist.id })))
