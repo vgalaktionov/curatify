@@ -14,7 +14,6 @@ auth.get('/callback', async (req, res) => {
   const api = new SpotifyUserClient(token)
   const userData = await api.me()
   const user = { token, ...userData }
-  console.log(user)
   await upsertUser(user)
   req.session.user = user
   res.redirect('/')

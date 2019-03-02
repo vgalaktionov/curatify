@@ -1,6 +1,6 @@
 <template>
   <div>
-    <img src="~/assets/logo_transparent.png" alt="" class="banner">
+    <img src="/logo_transparent.png" alt="" class="banner">
     <h3 class="is-size-3">Welcome!</h3>
     <p class="subtitle">To start discovering new music, please</p>
     <div class="login-button">

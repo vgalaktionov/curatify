@@ -60,6 +60,6 @@ async function allTasks(params) {
 
 // Run the fetching tasks
 // setImmediate(allTasks)
-setInterval(allTasks, 1000 * 60)
+setInterval(allTasks, 1000 * 60 * 5)
 
 start()
