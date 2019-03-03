@@ -1,30 +1,31 @@
 import consola from 'consola'
 import {
-  updatePlaylistArtistAffinities, updatePlaylistGenreAffinities, allPlaylists, userCuratedPlaylists
+  updatePlaylistArtistAffinities,
+  updatePlaylistGenreAffinities,
+  allPlaylists,
+  userCuratedPlaylists
 } from '../data/playlists'
-import { timeAsyncCall } from '../lib/timing'
-import { userUnheardInbox, updateTrackPlaylistMatches } from '../data/inbox'
+import {
+  userUnheardInbox,
+  updateTrackPlaylistMatches
+} from '../data/inbox'
 import { allUsers } from '../data/users'
 
 
 export async function analyzeAll() {
-  await timeAsyncCall(
-    'analyzing all...',
-    async () => {
-      const playlists = await allPlaylists()
-      await Promise.all(playlists.map(async p => {
-        await updatePlaylistArtistAffinities(p)
-        await updatePlaylistGenreAffinities(p)
-      }))
+  const playlists = await allPlaylists()
 
-      const users = await allUsers()
-      await Promise.all(users.map(async user => {
-        consola.info(`analyzing for user ${user.id}...`)
-        await calculateTrackPlaylistMatches(user)
-      }))
-    },
-    'analyzed all'
-  )
+  await Promise.all(playlists.map(async p => {
+    await updatePlaylistArtistAffinities(p)
+    await updatePlaylistGenreAffinities(p)
+  }))
+
+  const users = await allUsers()
+
+  await Promise.all(users.map(async user => {
+    consola.info(`analyzing for user ${user.id}...`)
+    await calculateTrackPlaylistMatches(user)
+  }))
 }
 
 
@@ -41,7 +42,10 @@ async function calculateTrackPlaylistMatches(user) {
       const artistScore = Object.values(
         Object.select(playlist.artist_affinities, track.artists)
       ).sum()
-      return { [playlist.id]: artistScore + genreScore, ...acc }
+      return {
+        [playlist.id]: artistScore + genreScore,
+        ...acc
+      }
     }, {}))
     await updateTrackPlaylistMatches(match, track.track_id, user.id)
   }))

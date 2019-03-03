@@ -108,4 +108,5 @@ export default {
 .playback:hover {
     color: rgb(129, 135, 141);
 }
+
 </style>

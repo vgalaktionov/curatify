@@ -65,6 +65,11 @@ const store = () => new Vuex.Store({
     },
     setTrackStatus(state, { trackId, status }) {
       state.inbox = state.inbox.map(t => t.id === trackId ? { ...t, status } : t)
+    },
+    setMatchingPlaylist(state, { trackId, playlistId }) {
+      state.inbox = state.inbox.map(t => {
+        return t.id === trackId ? { ...t, playlist_matches: playlistId } : t
+      })
     }
   },
 

@@ -1,11 +1,30 @@
 import consola from 'consola'
-import { SpotifyClient, SpotifyUserClient } from '../lib/spotify'
-import { upsertUser, allUsers } from '../data/users'
-import { upsertPlaylists, userPlaylists } from '../data/playlists'
-import { upsertTracks, upsertPlaylistTracks, wipePlaylistTracks } from '../data/tracks'
-import { upsertArtistTracks, upsertArtists, allIds } from '../data/artists'
-import { updateUserInbox, enrichInbox } from '../data/inbox'
-import { timeAsyncCall } from '../lib/timing'
+import {
+  SpotifyClient,
+  SpotifyUserClient
+} from '../lib/spotify'
+import {
+  upsertUser,
+  allUsers
+} from '../data/users'
+import {
+  upsertPlaylists,
+  userPlaylists
+} from '../data/playlists'
+import {
+  upsertTracks,
+  upsertPlaylistTracks,
+  wipePlaylistTracks
+} from '../data/tracks'
+import {
+  upsertArtistTracks,
+  upsertArtists,
+  allIds
+} from '../data/artists'
+import {
+  updateUserInbox,
+  enrichInbox
+} from '../data/inbox'
 
 
 function expiring({ expiresAt }) {
@@ -24,7 +43,11 @@ export async function updateUserToken(user) {
 
 async function ingestUserPlaylists(client, user) {
   for await (const page of client.mePlaylists()) {
-    await upsertPlaylists(page.map(({ id, name, images }) => ({
+    await upsertPlaylists(page.map(({
+      id,
+      name,
+      images
+    }) => ({
       id,
       user_id: user.id,
       name,
@@ -42,9 +65,15 @@ async function ingestUserPlaylistTracks(client, user) {
       tracks.push(...page.map('track'))
     }
     tracks = tracks.filter(t => t !== null).filter(t => !!t.id).unique('id')
-    await upsertTracks(tracks.map(track => ({ id: track.id, name: track.name })))
+    await upsertTracks(tracks.map(track => ({
+      id: track.id,
+      name: track.name
+    })))
     await wipePlaylistTracks(playlist.id)
-    await upsertPlaylistTracks(tracks.map(t => ({ track_id: t.id, playlist_id: playlist.id })))
+    await upsertPlaylistTracks(tracks.map(t => ({
+      track_id: t.id,
+      playlist_id: playlist.id
+    })))
     await ingestTrackArtists(tracks)
   }))
 }
@@ -56,9 +85,19 @@ async function ingestTrackArtists(tracks) {
     .flatten()
     .filter(a => !!a.id)
     .unique('id')
-    .map(({ id, name }) => ({ id, name })))
+    .map(({
+      id,
+      name
+    }) => ({
+      id,
+      name
+    })))
+
   await upsertArtistTracks(tracks
-    .map(track =>track.artists.map(({ id }) => ({ artist_id: id, track_id: track.id })))
+    .map(track => track.artists.map(({ id }) => ({
+      artist_id: id,
+      track_id: track.id
+    })))
     .flatten())
 }
 
@@ -86,18 +125,11 @@ async function ingestArtistDetails(client) {
 
 
 export async function ingestAll() {
-  await timeAsyncCall(
-    'ingesting for all users...',
-    async () => {
-      const users = await allUsers()
-      await Promise.all(users.map(async u => ingestForUser(u)))
+  const users = await allUsers()
+  await Promise.all(users.map(async u => ingestForUser(u)))
 
-      const token = await SpotifyClient.getToken()
-      const genericClient = new SpotifyClient(token)
-      await ingestArtistDetails(genericClient)
-      await enrichInbox()
-    },
-    'ingested all'
-  )
+  const token = await SpotifyClient.getToken()
+  const genericClient = new SpotifyClient(token)
+  await ingestArtistDetails(genericClient)
+  await enrichInbox()
 }
-
