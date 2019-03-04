@@ -1,0 +1,112 @@
+@import "~bulmaswatch/lux/_variables.scss";
+@import "~bulma/bulma.sass";
+@import "~bulmaswatch/lux/_overrides.scss";
+
+$fa-font-path: "../node_modules/@fortawesome/fontawesome-free/webfonts";
+
+@import "~@fortawesome/fontawesome-free/scss/fontawesome.scss";
+@import "~@fortawesome/fontawesome-free/scss/solid.scss";
+@import "~@fortawesome/fontawesome-free/scss/brands.scss";
+
+
+html,
+body {
+    /*font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
+    height: 100%;
+}
+
+nav {
+    /*margin-bottom: 20px;*/
+    height: 90px;
+}
+
+.navbar img {
+    max-height: 200px;
+}
+
+.navbar-item.is-logo {
+    position: absolute;
+    left: 50%;
+    margin-left: -64px;
+    /* 50% */
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.button.is-spotify {
+    background-color: transparent;
+    color: #1db954;
+    border-color: #1db954;
+}
+
+.button.is-spotify:hover {
+    background-color: #1db954;
+    color: black;
+}
+
+
+.playback {
+    font-size: 40pt;
+    border-color: transparent;
+    outline: none;
+}
+
+.playback:hover {
+    color: rgb(129, 135, 141);
+}
+
+.playback-buttons {
+    /*margin-left: 6rem;*/
+}
+
+
+.album-art {
+    min-height: 300px;
+}
+
+.player {
+    /*margin-left: 6rem;*/
+}
+
+.currently-playing {
+    height: 380px;
+    min-height: 380px;
+}
+
+.currently-playing img {
+    height: 280px;
+}
+
+img.playlist-cover {
+    max-height: 60px;
+    height: 60px;
+}
+
+.center-table th {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.center-table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+img.play-spinner {
+    padding-top: 0.5rem;
+}
+
+img.preloader {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+img.banner {
+    height: 500px;
+    margin-bottom: -50px;
+}
+
+.login-page {
+    overflow-y: scroll;
+}

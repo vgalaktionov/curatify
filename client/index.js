@@ -1,8 +1,24 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
+import Login from './components/Login'
+import Main from './components/Main'
+
+import './index.scss'
+
+import { StoreProvider, createStore, useStore, useActions } from 'easy-peasy'
+import store from './store'
+
+
 function App() {
-  return (<h1> Hello, world! </h1>)
+  const user = useStore(state => state.user)
+  return user ? <Login /> : <Main />
 }
 
-ReactDOM.render(<App />, document.getElementById('app'))
+
+ReactDOM.render(
+  <StoreProvider store={store}>
+    <App />
+  </StoreProvider>,
+  document.getElementById('app')
+)
