@@ -1,6 +1,6 @@
 import express from 'express'
-import { userPlaylists, updatePlaylistType } from '../data/playlists'
-import { userUnheardInboxRich, updateTrackStatus } from '../data/inbox'
+import { userPlaylists, updatePlaylistType } from './data/playlists'
+import { userUnheardInboxRich, updateTrackStatus } from './data/inbox'
 import { SpotifyUserClient } from '../lib/spotify'
 
 

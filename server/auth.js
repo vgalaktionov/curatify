@@ -1,7 +1,7 @@
 import express from 'express'
-import { upsertUser } from '../data/users'
+import { upsertUser } from './data/users'
 import { SpotifyUserClient } from '../lib/spotify'
-import { updateUserToken } from '../tasks/ingest'
+import { updateUserToken } from './tasks/ingest'
 
 const auth = express.Router()
 

@@ -1,8 +1,7 @@
-import consola from 'consola'
 import {
   SpotifyClient,
   SpotifyUserClient
-} from '../lib/spotify'
+} from '../../lib/spotify'
 import {
   upsertUser,
   allUsers

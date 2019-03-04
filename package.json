@@ -5,7 +5,7 @@
   "author": "Vadim",
   "private": true,
   "scripts": {
-    "dev": "NODE_ENV=development nodemon -r dotenv/config --harmony server/index.js -w server -w tasks -w lib -w data",
+    "dev": "NODE_ENV=development nodemon -r dotenv/config --harmony server/index.js -w server -w lib",
     "build": "nuxt build",
     "start": "NODE_ENV=production node server/index.js",
     "generate": "nuxt generate",
@@ -27,6 +27,7 @@
     "camelcase-keys": "^5.0.0",
     "cookie-session": "^2.0.0-beta.3",
     "cross-env": "^5.2.0",
+    "easy-peasy": "^1.14.1",
     "esm": "^3.0.84",
     "express": "^4.16.3",
     "express-async-errors": "^3.1.1",
@@ -36,6 +37,8 @@
     "pg": "^7.8.0",
     "pg-template-tag": "^0.1.2",
     "postgrator": "^3.7.0",
+    "react": "^16.8.3",
+    "react-dom": "^16.8.3",
     "snakecase-keys": "^2.1.0",
     "sugar": "^2.0.6"
   },
@@ -46,6 +49,8 @@
     "eslint": "^5.0.1",
     "eslint-loader": "^2.0.0",
     "eslint-plugin-vue": "^4.0.0",
-    "nodemon": "^1.11.0"
+    "nodemon": "^1.11.0",
+    "parcel-bundler": "^1.11.0",
+    "xo": "^0.24.0"
   }
 }

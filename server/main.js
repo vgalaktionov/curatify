@@ -1,12 +1,12 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import cookieSession from 'cookie-session'
-import consola from 'consola'
-import { Nuxt, Builder } from 'nuxt'
+import Bundler from 'parcel-bundler'
+
 import auth from './auth'
 import api from './api'
-import { ingestAll } from '../tasks/ingest'
-import { analyzeAll } from '../tasks/analyze'
+import { ingestAll } from './tasks/ingest'
+import { analyzeAll } from './tasks/analyze'
 
 const app = express()
 const host = process.env.HOST || '127.0.0.1'
@@ -14,15 +14,11 @@ const port = process.env.PORT || 3000
 
 app.set('port', port)
 
-import config from '../nuxt.config.js'
-config.dev = !(process.env.NODE_ENV === 'production')
 
 async function start() {
-  const nuxt = new Nuxt(config)
-
-  if (config.dev) {
-    const builder = new Builder(nuxt)
-    await builder.build()
+  if (process.env.NODE_ENV !== 'production') {
+    const bundler = new Bundler('client/index.html', {})
+    app.use(bundler.middleware())
   }
 
   app.use(bodyParser.json())
@@ -35,13 +31,9 @@ async function start() {
   app.use('/auth', auth)
   app.use('/api', api)
 
-  app.use(nuxt.render)
 
   app.listen(port, host)
-  consola.ready({
-    message: `Server listening on http://${host}:${port}`,
-    badge: true
-  })
+  console.info(`Server listening on http://${host}:${port}`)
 }
 
 async function allTasks(params) {
