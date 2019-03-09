@@ -1,10 +1,14 @@
 import express from 'express'
-import { userPlaylists, updatePlaylistType } from './data/playlists'
-import { userUnheardInboxRich, updateTrackStatus } from './data/inbox'
-import { SpotifyUserClient } from '../lib/spotify'
+import {
+  userPlaylists,
+  updatePlaylistType
+} from './data/playlists'
+import {
+  userUnheardInboxRich,
+  updateTrackStatus
+} from './data/inbox'
 
-
-const api = express.Router()
+const api = new express.Router()
 
 api.get('/inbox', async (req, res) => {
   const inbox = await userUnheardInboxRich(req.session.user)

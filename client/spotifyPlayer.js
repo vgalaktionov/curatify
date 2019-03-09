@@ -1,6 +1,8 @@
 /* global Spotify */
-export default function({ store }) {
-  if (store.state.user) {
+import store from './store'
+
+export default function spotifyPlayer () {
+  if (store.getState().user) {
     window.onSpotifyWebPlaybackSDKReady = () => {
       const player = new Spotify.Player({
         name: 'Curatify Player',
@@ -17,6 +19,7 @@ export default function({ store }) {
       player.addListener('player_state_changed', state => { console.log(state) })
 
       // Ready
+      /* eslint-disable camelcase */
       player.addListener('ready', ({ device_id }) => {
         console.log('Ready with Device ID', device_id)
         store.commit('setReady', true)
@@ -27,6 +30,7 @@ export default function({ store }) {
         console.log('Device ID has gone offline', device_id)
         store.commit('setReady', false)
       })
+      /* eslint-enable camelcase */
 
       // Connect to the player!
       player.connect()
@@ -34,7 +38,7 @@ export default function({ store }) {
 
       setInterval(async () => {
         const playbackState = await player.getCurrentState()
-        store.commit('setPlaybackState', playbackState)
+        store.dispatch.setPlaybackState(playbackState)
       }, 1000)
     }
   } else {

@@ -5,8 +5,12 @@ import Bundler from 'parcel-bundler'
 
 import auth from './auth'
 import api from './api'
-import { ingestAll } from './tasks/ingest'
-import { analyzeAll } from './tasks/analyze'
+import {
+  ingestAll
+} from './tasks/ingest'
+import {
+  analyzeAll
+} from './tasks/analyze'
 
 const app = express()
 const host = process.env.HOST || '127.0.0.1'
@@ -14,13 +18,7 @@ const port = process.env.PORT || 3000
 
 app.set('port', port)
 
-
-async function start() {
-  if (process.env.NODE_ENV !== 'production') {
-    const bundler = new Bundler('client/index.html', {})
-    app.use(bundler.middleware())
-  }
-
+async function start () {
   app.use(bodyParser.json())
   app.use(cookieSession({
     maxAge: 24 * 60 * 60 * 1000,
@@ -31,12 +29,16 @@ async function start() {
   app.use('/auth', auth)
   app.use('/api', api)
 
+  if (process.env.NODE_ENV !== 'production') {
+    const bundler = new Bundler('client/index.html', {})
+    app.use(bundler.middleware())
+  }
 
   app.listen(port, host)
   console.info(`Server listening on http://${host}:${port}`)
 }
 
-async function allTasks(params) {
+async function allTasks () {
   console.info('Running periodic tasks...')
   await ingestAll()
   await analyzeAll()

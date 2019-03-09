@@ -25,20 +25,21 @@ import {
   enrichInbox
 } from '../data/inbox'
 
-
-function expiring({ expiresAt }) {
+function expiring({
+  expiresAt
+}) {
   return (Date.now() / 1000) > expiresAt - 60
 }
 
-
 export async function updateUserToken(user) {
   if (expiring(user.token)) {
-    user.token = await new SpotifyUserClient(user.token).refreshToken()
+    const client = new SpotifyUserClient(user.token)
+    user.token = await client.refreshToken()
     await upsertUser(user)
   }
+
   return user
 }
-
 
 async function ingestUserPlaylists(client, user) {
   for await (const page of client.mePlaylists()) {
@@ -55,15 +56,15 @@ async function ingestUserPlaylists(client, user) {
   }
 }
 
-
 async function ingestUserPlaylistTracks(client, user) {
   const playlists = await userPlaylists(user.id)
-  await Promise.all(playlists.map(async (playlist) => {
+  await Promise.all(playlists.map(async playlist => {
     let tracks = []
     for await (const page of client.playlistTracks(playlist.id)) {
       tracks.push(...page.map('track'))
     }
-    tracks = tracks.filter(t => t !== null).filter(t => !!t.id).unique('id')
+
+    tracks = tracks.filter(t => t !== null).filter(t => Boolean(t.id)).unique('id')
     await upsertTracks(tracks.map(track => ({
       id: track.id,
       name: track.name
@@ -77,12 +78,11 @@ async function ingestUserPlaylistTracks(client, user) {
   }))
 }
 
-
 async function ingestTrackArtists(tracks) {
   await upsertArtists(tracks
     .map('artists')
     .flatten()
-    .filter(a => !!a.id)
+    .filter(a => Boolean(a.id))
     .unique('id')
     .map(({
       id,
@@ -93,42 +93,49 @@ async function ingestTrackArtists(tracks) {
     })))
 
   await upsertArtistTracks(tracks
-    .map(track => track.artists.map(({ id }) => ({
+    .map(track => track.artists.map(({
+      id
+    }) => ({
       artist_id: id,
       track_id: track.id
     })))
     .flatten())
 }
 
-
 async function ingestForUser(user) {
-  consola.info(`ingesting for user ${user.id}...`)
+  console.info(`ingesting for user ${user.id}...`)
   user = await updateUserToken(user)
   const client = new SpotifyUserClient(user.token)
-  await ingestUserPlaylists(client, user)
-  consola.info(`ingested playlists for user ${user.id}...`)
-  await ingestUserPlaylistTracks(client, user)
-  consola.info(`ingested playlist tracks for user ${user.id}...`)
-  await updateUserInbox(user)
-  consola.info(`updated inbox for user ${user.id}...`)
-}
 
+  await ingestUserPlaylists(client, user)
+  console.info(`ingested playlists for user ${user.id}...`)
+
+  await ingestUserPlaylistTracks(client, user)
+  console.info(`ingested playlist tracks for user ${user.id}...`)
+
+  await updateUserInbox(user)
+  console.info(`updated inbox for user ${user.id}...`)
+}
 
 async function ingestArtistDetails(client) {
   const ids = await allIds()
-  await Promise.all(ids.inGroupsOf(50).map(async chunk => {
-    const artists = await client.artists(chunk)
-    await upsertArtists(artists.map(a => Object.select(a, ['id', 'name', 'genres', 'images'])))
-  }))
+  await Promise.all(
+    ids.inGroupsOf(50).map(async chunk => {
+      const artists = await client.artists(chunk)
+      await upsertArtists(artists.map(a => Object.select(a, ['id', 'name', 'genres', 'images'])))
+    }))
 }
 
-
 export async function ingestAll() {
-  const users = await allUsers()
-  await Promise.all(users.map(async u => ingestForUser(u)))
+  try {
+    const users = await allUsers()
+    await Promise.all(users.map(async u => ingestForUser(u)))
 
-  const token = await SpotifyClient.getToken()
-  const genericClient = new SpotifyClient(token)
-  await ingestArtistDetails(genericClient)
-  await enrichInbox()
+    const token = await SpotifyClient.getToken()
+    const genericClient = new SpotifyClient(token)
+    await ingestArtistDetails(genericClient)
+    await enrichInbox()
+  } catch (e) {
+    console.error(e)
+  }
 }

@@ -1,4 +1,3 @@
-import consola from 'consola'
 import {
   updatePlaylistArtistAffinities,
   updatePlaylistGenreAffinities,
@@ -9,8 +8,9 @@ import {
   userUnheardInbox,
   updateTrackPlaylistMatches
 } from '../data/inbox'
-import { allUsers } from '../data/users'
-
+import {
+  allUsers
+} from '../data/users'
 
 export async function analyzeAll() {
   const playlists = await allPlaylists()
@@ -23,11 +23,10 @@ export async function analyzeAll() {
   const users = await allUsers()
 
   await Promise.all(users.map(async user => {
-    consola.info(`analyzing for user ${user.id}...`)
+    console.info(`analyzing for user ${user.id}...`)
     await calculateTrackPlaylistMatches(user)
   }))
 }
-
 
 async function calculateTrackPlaylistMatches(user) {
   const playlists = await userCuratedPlaylists(user.id)
