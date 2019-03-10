@@ -1,28 +1,22 @@
 import * as db from './db'
-import sql, { join } from 'pg-template-tag'
+import sql from 'pg-template-tag'
 
-export async function upsertTracks(tracks) {
-  const values = join(tracks.map(({ id, name }) => sql `(${id}, ${name})`), ', ')
-
+export async function upsertTracks (tracks) {
   await db.query(sql `
     INSERT INTO tracks (id, name)
-      VALUES ${values}
+      VALUES ${db.values(tracks, 'id', 'name')}
     ON CONFLICT (id) DO NOTHING;
   `)
 }
 
-export async function upsertPlaylistTracks(playlistTracks) {
-  const values = join(
-    playlistTracks.map(({ track_id, playlist_id }) => sql `(${track_id}, ${playlist_id})`), ', '
-  )
-
+export async function upsertPlaylistTracks (playlistTracks) {
   await db.query(sql `
     INSERT INTO playlists_tracks (track_id, playlist_id)
-      VALUES ${values}
+      VALUES ${db.values(playlistTracks, 'track_id', 'playlist_id')}
     ON CONFLICT (track_id, playlist_id) DO NOTHING;
   `)
 }
 
-export async function wipePlaylistTracks(playlistId) {
+export async function wipePlaylistTracks (playlistId) {
   await db.query(sql `DELETE FROM playlists_tracks WHERE playlist_id = ${playlistId};`)
 }

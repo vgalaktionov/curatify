@@ -30,6 +30,7 @@ module.exports = {
     "no-return-await": "error",
     "no-undef": "error",
     "react/prop-types": 0,
-    "template-tag-spacing": 0
+    "template-tag-spacing": 0,
+    "camelcase": ["error", {"properties": "never", "ignoreDestructuring": true}]
   }
 }

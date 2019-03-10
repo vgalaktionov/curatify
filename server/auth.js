@@ -1,4 +1,3 @@
-import path from 'path'
 import express from 'express'
 import { SpotifyUserClient } from '../lib/spotify'
 import { upsertUser } from './data/users'
@@ -29,9 +28,7 @@ auth.get('/logout', (req, res) => {
 })
 
 auth.get('/me', async (req, res) => {
-  let {
-    user
-  } = req.session
+  let { user } = req.session
   if (user) {
     user = await updateUserToken(user)
     res.json(user)
@@ -39,9 +36,5 @@ auth.get('/me', async (req, res) => {
     res.status(204)
   }
 })
-
-export function ensureAuth (req, res, next) {
-  req.session.user ? next() : res.sendFile(path.resolve('dist/login.html'))
-}
 
 export default auth

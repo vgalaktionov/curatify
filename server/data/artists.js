@@ -1,14 +1,15 @@
 import * as db from './db'
-import sql, { join } from 'pg-template-tag'
+import sql from 'pg-template-tag'
 
-export async function upsertArtists(artists) {
-  const values = join(artists.map(({ id, name, genres = {}, images = {} }) => {
-    return sql `(${id}, ${name}, ${JSON.stringify(genres)}, ${JSON.stringify(images)})`
-  }), ', ')
-
+export async function upsertArtists (artists) {
   await db.query(sql `
     INSERT INTO artists (id, name, genres, images)
-      VALUES ${values}
+      VALUES ${db.values(
+    artists,
+    'id',
+    'name',
+    { key: 'genres', def: [], json: true },
+    { key: 'images', def: [], json: true })}
     ON CONFLICT (id) DO UPDATE SET
       name = EXCLUDED.name,
       genres = EXCLUDED.genres,
@@ -16,20 +17,15 @@ export async function upsertArtists(artists) {
   `)
 }
 
-export async function upsertArtistTracks(artistTracks) {
-  const values = join(artistTracks.map(({
-    track_id,
-    artist_id
-  }) => sql `(${track_id}, ${artist_id})`), ', ')
-
+export async function upsertArtistTracks (artistTracks) {
   await db.query(sql `
     INSERT INTO artists_tracks (track_id, artist_id)
-      VALUES ${values}
+      VALUES ${db.values(artistTracks, 'track_id', 'artist_id')}
     ON CONFLICT (track_id, artist_id) DO NOTHING;
   `)
 }
 
-export async function allIds() {
+export async function allIds () {
   const res = await db.query(sql `SELECT id FROM artists;`)
   return res.rows.map('id')
 }

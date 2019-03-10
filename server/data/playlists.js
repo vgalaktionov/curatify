@@ -1,40 +1,34 @@
 import * as db from './db'
-import sql, { join } from 'pg-template-tag'
+import sql from 'pg-template-tag'
 
-export async function upsertPlaylists(playlists) {
-  const values = join(playlists.map(({ id, user_id, name, images }) => sql `
-      (${id}, ${user_id}, ${name}, ${JSON.stringify(images)})
-    `),
-    ', '
-  )
-
+export async function upsertPlaylists (playlists) {
   await db.query(sql `
     INSERT INTO playlists (id, user_id, name, images)
-      VALUES ${values}
+      VALUES ${db.values(playlists, 'id', 'user_id', 'name', { key: 'images', json: true })}
     ON CONFLICT (id) DO UPDATE SET
       name = EXCLUDED.name,
       images =  EXCLUDED.images;
   `)
 }
 
-export async function userPlaylists(userId) {
+export async function userPlaylists (userId) {
   const res = await db.query(sql `SELECT * FROM playlists WHERE user_id = ${userId};`)
   return res.rows
 }
 
-export async function userCuratedPlaylists(userId) {
+export async function userCuratedPlaylists (userId) {
   const res = await db.query(
     sql `SELECT * FROM playlists WHERE user_id = ${userId} AND playlist_type = 'curated';`
   )
   return res.rows
 }
 
-export async function allPlaylists() {
+export async function allPlaylists () {
   const res = await db.query(sql `SELECT * FROM playlists;`)
   return res.rows
 }
 
-export async function updatePlaylistArtistAffinities({ id }) {
+export async function updatePlaylistArtistAffinities ({ id }) {
   await db.query(sql `
     WITH aff AS (
       SELECT jsonb_object_agg(temp.artist_id, temp.count) as aff
@@ -55,7 +49,7 @@ export async function updatePlaylistArtistAffinities({ id }) {
   `)
 }
 
-export async function updatePlaylistGenreAffinities({ id }) {
+export async function updatePlaylistGenreAffinities ({ id }) {
   await db.query(sql `
     WITH aff AS (
       SELECT jsonb_object_agg(agg.genre, agg.count) AS aff
@@ -76,6 +70,6 @@ export async function updatePlaylistGenreAffinities({ id }) {
   `)
 }
 
-export async function updatePlaylistType(id, type) {
+export async function updatePlaylistType (id, type) {
   await db.query(sql `update playlists set playlist_type = ${type} where id = ${id};`)
 }

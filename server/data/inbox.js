@@ -1,8 +1,7 @@
 import * as db from './db'
 import sql from 'pg-template-tag'
 
-
-export async function updateUserInbox({ id }) {
+export async function updateUserInbox ({ id }) {
   await db.query(sql `
     INSERT INTO inbox
     (user_id, track_id)
@@ -15,14 +14,14 @@ export async function updateUserInbox({ id }) {
   `)
 }
 
-export async function userUnheardInbox({ id }) {
+export async function userUnheardInbox ({ id }) {
   const res = await db.query(
     sql `SELECT * FROM inbox WHERE user_id = ${id} AND status = 'unheard';`
   )
   return res.rows
 }
 
-export async function userUnheardInboxRich({ id }) {
+export async function userUnheardInboxRich ({ id }) {
   const res = await db.query(sql `
     SELECT *, t.name FROM inbox i
       INNER JOIN tracks t ON t.id = i.track_id
@@ -33,7 +32,7 @@ export async function userUnheardInboxRich({ id }) {
   return res.rows
 }
 
-export async function enrichInbox() {
+export async function enrichInbox () {
   await db.query(sql `
     UPDATE inbox
     SET artists = temp.artists,
@@ -54,8 +53,7 @@ export async function enrichInbox() {
   `)
 }
 
-
-export async function updateTrackPlaylistMatches(playlistId, trackId, userId) {
+export async function updateTrackPlaylistMatches (playlistId, trackId, userId) {
   await db.query(sql `
     UPDATE inbox SET
       playlist_matches = ${playlistId}
@@ -63,7 +61,7 @@ export async function updateTrackPlaylistMatches(playlistId, trackId, userId) {
   `)
 }
 
-export async function updateTrackStatus(trackId, userId, status) {
+export async function updateTrackStatus (trackId, userId, status) {
   await db.query(sql `
     UPDATE inbox SET
       status = ${status}
