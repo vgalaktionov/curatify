@@ -1,13 +1,8 @@
+import path from 'path'
 import express from 'express'
-import {
-  SpotifyUserClient
-} from '../lib/spotify'
-import {
-  upsertUser
-} from './data/users'
-import {
-  updateUserToken
-} from './tasks/ingest'
+import { SpotifyUserClient } from '../lib/spotify'
+import { upsertUser } from './data/users'
+import { updateUserToken } from './tasks/ingest'
 
 const auth = new express.Router()
 
@@ -44,5 +39,9 @@ auth.get('/me', async (req, res) => {
     res.status(204)
   }
 })
+
+export function ensureAuth (req, res, next) {
+  req.session.user ? next() : res.sendFile(path.resolve('dist/login.html'))
+}
 
 export default auth

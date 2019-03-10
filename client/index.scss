@@ -20,18 +20,18 @@ nav {
     height: 90px;
 }
 
-.navbar img {
-    max-height: 200px;
-}
-
 .navbar-item.is-logo {
-    position: absolute;
-    left: 50%;
-    margin-left: -64px;
-    /* 50% */
-    height: 100%;
-    display: flex;
-    align-items: center;
+  position: absolute;
+  left: 50%;
+  margin-left: -64px;
+  /* 50% */
+  height: 100%;
+  display: flex;
+  align-items: center;
+
+  img {
+      max-height: 100px;
+  }
 }
 
 .button.is-spotify {

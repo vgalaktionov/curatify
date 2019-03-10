@@ -13,16 +13,11 @@ function PlaylistRow ({ playlist }) {
       <td>{ playlist.name }</td>
       <td>
         <div className='select'>
-          <select onChange={async e => {
+          <select defaultValue={playlist.playlist_type} onChange={async e => {
             await patchPlaylistType({ id: playlist.id, type: e.target.value })
           }}>
             {playlistTypes.map(pt => {
-              return (<option
-                key={pt}
-                value={pt}
-                selected={pt === playlist.playlist_type}>
-                { pt }
-              </option>)
+              return <option key={pt} value={pt}>{ pt }</option>
             })}
           </select>
         </div>

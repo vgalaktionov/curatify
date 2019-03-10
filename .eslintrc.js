@@ -22,10 +22,10 @@ module.exports = {
     }],
     "comma-dangle": ["error", "never"],
     "comma-spacing": "error",
-    // "object-curly-newline": ["error", {
-    //   "multiline": true,
-    //   "minProperties": 5
-    // }],
+    "object-curly-newline": ["error", {
+      "multiline": true,
+      "minProperties": 5
+    }],
     "object-curly-newline": 0,
     "no-return-await": "error",
     "no-undef": "error",

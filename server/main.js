@@ -1,16 +1,12 @@
+import path from 'path'
 import express from 'express'
 import bodyParser from 'body-parser'
 import cookieSession from 'cookie-session'
-import Bundler from 'parcel-bundler'
 
 import auth from './auth'
 import api from './api'
-import {
-  ingestAll
-} from './tasks/ingest'
-import {
-  analyzeAll
-} from './tasks/analyze'
+import { ingestAll } from './tasks/ingest'
+import { analyzeAll } from './tasks/analyze'
 
 const app = express()
 const host = process.env.HOST || '127.0.0.1'
@@ -26,14 +22,16 @@ async function start () {
     secret: process.env.SECRET
   }))
 
+  app.use(express.static('dist'))
   app.use('/auth', auth)
   app.use('/api', api)
-
-  if (process.env.NODE_ENV !== 'production') {
-    const bundler = new Bundler('client/index.html', {})
-    app.use(bundler.middleware())
-  }
-
+  app.get('/*', (req, res) => {
+    if (req.session.user) {
+      res.sendFile(path.resolve('dist/index.html'))
+    } else {
+      res.sendFile(path.resolve('dist/login.html'))
+    }
+  })
   app.listen(port, host)
   console.info(`Server listening on http://${host}:${port}`)
 }

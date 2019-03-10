@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import axios from 'axios'
 
@@ -9,7 +9,7 @@ import Icon from './Icon.jsx'
 function CurrentlyPlaying ({ track }) {
   const imageUrl = track.album.images.max('height').url
   const playlists = useStore(state => state.playlists)
-  const matchingPlaylist = playlists.find(p => p.id === this.track.playlist_matches)
+  const matchingPlaylist = playlists.find(p => p.id === track.playlist_matches)
   const setMatchingPlaylist = useActions(actions => actions.setMatchingPlaylist)
 
   return (
@@ -23,18 +23,17 @@ function CurrentlyPlaying ({ track }) {
         <label htmlFor='matches' className='is-small'>matches:
           <div className='control is-centered has-text-centered'>
             <span className='select'>
-              <select name='matches' className='is-small' onChange={async e => {
-                await setMatchingPlaylist({ trackId: track.id, playlistId: e.target.value })
-              }}
+              <select
+                name='matches'
+                className='is-small'
+                defaultValue={matchingPlaylist.id}
+                onChange={async e => {
+                  await setMatchingPlaylist({ trackId: track.id, playlistId: e.target.value })
+                }}
               >
                 {playlists.map(playlist => {
                   return (
-                    <option
-                      key={playlist.id}
-                      selected={playlist.id === matchingPlaylist.id}
-                      value={playlist.id}
-                    >{ playlist.name }
-                    </option>
+                    <option key={playlist.id} value={playlist.id}>{ playlist.name }</option>
                   )
                 })}
               </select>
@@ -49,13 +48,12 @@ function CurrentlyPlaying ({ track }) {
 export default function Player () {
   const track = useStore(state => state.currentTrack)
   const {
-    duration: trackDuration,
-    position: trackPosition,
-    paused
+    duration: trackDuration, position: trackPosition
   } = useStore(state => state.playbackState)
   const playerReady = useStore(state => state.ready)
   const inbox = useStore(state => state.inbox)
-  const [playing, setPlaying] = useState(false)
+  const setPaused = useActions(actions => actions.setPaused)
+  const nowPlaying = useStore(state => state.nowPlaying)
 
   const setTrackStatus = useActions(actions => actions.setTrackStatus)
   const token = useStore(state => state.user.token, [])
@@ -82,19 +80,16 @@ export default function Player () {
   }
 
   const playOrPause = async () => {
-    setPlaying(!playing)
-    if (!playing) {
+    if (nowPlaying) {
       await spotify.pause(window.player._options.id)
+      setPaused(true)
     } else {
       await spotify.play(
         inbox.to(11).map(it => 'spotify:track:' + it.id),
         window.player._options.id
       )
+      setPaused(false)
     }
-
-    setTimeout(() => {
-      this.playing = !paused
-    }, 1000)
   }
 
   return (
@@ -110,27 +105,27 @@ export default function Player () {
       <div className='columns playback-buttons is-vcentered has-text-centered'>
         <div className='column is-one-fifth'>
           <button className='playback' onClick={dislikeTrack}>
-            <Icon icon='thumb-down' size='is-large' />
+            <Icon icon='fas fa-heart-broken' size='is-large' />
           </button>
         </div>
         <div className='column is-one-fifth'>
           <button className='playback' onClick={previousTrack}>
-            <Icon icon='skip-previous' size='is-large' />
+            <Icon icon='fas fa-step-backward' size='is-large' />
           </button>
         </div>
         <div className='column is-one-fifth'>
           <button disabled={!playerReady} className='playback' onClick={playOrPause}>
-            <Icon icon={playing ? 'pause' : 'play'} size='is-large' />
+            <Icon icon={nowPlaying ? 'fas fa-pause' : 'fas fa-play'} size='is-large' />
           </button>
         </div>
         <div className='column is-one-fifth'>
           <button className='playback' onClick={nextTrack}>
-            <Icon icon='skip-next' size='is-large' />
+            <Icon icon='fas fa-step-forward' size='is-large' />
           </button>
         </div>
         <div className='column is-one-fifth'>
           <button className='playback' onClick={likeTrack}>
-            <Icon icon='thumb-up' size='is-large' />
+            <Icon icon='fas fa-heart' size='is-large' />
           </button>
         </div>
       </div>

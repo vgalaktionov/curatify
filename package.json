@@ -5,7 +5,7 @@
   "author": "Vadim",
   "private": true,
   "scripts": {
-    "dev": "NODE_ENV=development nodemon -r dotenv/config --harmony server/index.js -w server -w lib",
+    "dev": "NODE_ENV=development concurrently 'nodemon -r dotenv/config --harmony server/index.js -w server -w lib' 'npx parcel watch client/index.html client/login.html'",
     "build": "nuxt build",
     "start": "NODE_ENV=production node server/index.js",
     "generate": "nuxt generate",

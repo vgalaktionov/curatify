@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useStore, useActions } from 'easy-peasy'
 import Icon from './Icon'
 
 import playing from '../static/playing.svg'
 
 function InboxRow ({ track }) {
-  const nowPlaying = true
+  const nowPlaying = useStore(state => state.nowPlaying)
+  const currentTrack = useStore(state => state.currentTrack)
+  const thisTrack = (currentTrack.id === track.id) && nowPlaying
   return (
     <tr key={track.id} >
       <td>{track.name}</td>
@@ -13,7 +16,7 @@ function InboxRow ({ track }) {
         {(track.status === 'disliked') && <Icon icon='fas fa-heart-broken' />}
       </td>
       <td>
-        {nowPlaying &&
+        {thisTrack &&
           <span className='icon is-small'>
             <img src={playing} className='play-spinner' />
           </span>}
@@ -23,7 +26,9 @@ function InboxRow ({ track }) {
 }
 
 export default function InboxList () {
-  const inbox = []
+  const getInbox = useActions(actions => actions.getInbox)
+  useEffect(() => { getInbox() }, [])
+  const inbox = useStore(store => store.inbox)
   return (
     <div>
       <h4 className='is-size-4'>INBOX TRACKS</h4>
@@ -36,7 +41,7 @@ export default function InboxList () {
           </tr>
         </thead>
         <tbody>
-          {inbox.map(track => <InboxRow track={track} />)}
+          {inbox.slice(0, 9).map(track => <InboxRow track={track} key={track.id} />)}
         </tbody>
       </table>
     </div>

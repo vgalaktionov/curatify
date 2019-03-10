@@ -8,7 +8,7 @@ import { StoreProvider, useStore, useActions } from 'easy-peasy'
 import axios from 'axios'
 
 import spotifyPlayer from './spotifyPlayer'
-import Login from './components/Login.jsx'
+import Loading from './components/Loading.jsx'
 import Main from './components/Main.jsx'
 import store from './store'
 import './index.scss'
@@ -23,11 +23,10 @@ if (store.getState().user) {
 }
 
 function App () {
-  // const [user, setUser] = useState(null)
   const initialFetch = useActions(actions => actions.initialFetch)
   useEffect(() => { initialFetch() }, [])
   const user = useStore(state => state.user)
-  return user ? <Main /> : <Login />
+  return user ? <Main /> : <Loading />
 }
 
 ReactDOM.render(

@@ -44,6 +44,7 @@ const store = createStore({
       }) || {}
     }
   }),
+  nowPlaying: select(state => state.playbackState.paused === false),
 
   // Actions
   setUser (state, user) {
@@ -89,6 +90,9 @@ const store = createStore({
         playlist_matches: playlistId
       } : t
     })
+  },
+  setPaused (state, paused) {
+    state.playbackState.paused = false
   },
 
   // Thunks
