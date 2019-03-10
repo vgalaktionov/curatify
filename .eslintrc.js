@@ -26,9 +26,10 @@ module.exports = {
       "multiline": true,
       "minProperties": 5
     }],
-    "object-curly-newline": 0,
+    // "object-curly-newline": 0,
     "no-return-await": "error",
     "no-undef": "error",
-    "react/prop-types": 0
+    "react/prop-types": 0,
+    "template-tag-spacing": 0
   }
 }
