@@ -4,15 +4,10 @@ import {
   allPlaylists,
   userCuratedPlaylists
 } from '../data/playlists'
-import {
-  userUnheardInbox,
-  updateTrackPlaylistMatches
-} from '../data/inbox'
-import {
-  allUsers
-} from '../data/users'
+import { userUnheardInbox, updateTrackPlaylistMatches } from '../data/inbox'
+import { allUsers } from '../data/users'
 
-export async function analyzeAll() {
+export async function analyzeAll () {
   const playlists = await allPlaylists()
 
   await Promise.all(playlists.map(async p => {
@@ -28,7 +23,7 @@ export async function analyzeAll() {
   }))
 }
 
-async function calculateTrackPlaylistMatches(user) {
+async function calculateTrackPlaylistMatches (user) {
   const playlists = await userCuratedPlaylists(user.id)
   const unheard = await userUnheardInbox(user)
 
