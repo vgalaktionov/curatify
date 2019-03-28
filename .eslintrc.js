@@ -9,6 +9,7 @@ module.exports = {
   },
   parser: 'babel-eslint',
   extends: [
+    'eslint:recommended',
     'standard', 'standard-react'
   ],
   // add your custom rules here

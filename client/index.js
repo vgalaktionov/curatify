@@ -11,7 +11,6 @@ import spotifyPlayer from './spotifyPlayer'
 import Loading from './components/Loading.jsx'
 import Main from './components/Main.jsx'
 import store from './store'
-import './index.scss'
 
 spotifyPlayer()
 

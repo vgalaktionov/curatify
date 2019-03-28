@@ -33,7 +33,7 @@
     "pg": "^7.8.0",
     "pg-template-tag": "^0.1.2",
     "postgrator": "^3.7.0",
-    "react": "^16.8.3",
+    "react": "^16.8.6",
     "react-dom": "^16.8.3",
     "react-router-dom": "^4.3.1",
     "snakecase-keys": "^2.1.0",

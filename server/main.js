@@ -25,11 +25,14 @@ async function start () {
   app.use(express.static('dist'))
   app.use('/auth', auth)
   app.use('/api', api)
+  app.get('/login', (req, res) => {
+    res.sendFile(path.resolve('dist/login.html'))
+  })
   app.get('/*', (req, res) => {
-    if (req.session.user) {
-      res.sendFile(path.resolve('dist/index.html'))
+    if (!req.session.user) {
+      res.redirect('/login')
     } else {
-      res.sendFile(path.resolve('dist/login.html'))
+      res.sendFile(path.resolve('dist/index.html'))
     }
   })
   app.listen(port, host)
