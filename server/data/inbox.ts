@@ -1,19 +1,6 @@
 import * as db from "./db";
-import { User } from "./users";
 import sql from "pg-template-tag";
-
-export interface InboxTrack {
-  user_id: string;
-  track_id: string;
-  genres: string[];
-  artists: string[];
-}
-
-export enum Status {
-  Unheard = "unheard",
-  Liked = "liked",
-  Disliked = "disliked"
-}
+import { User, InboxTrack, Status } from "../../types";
 
 export async function updateUserInbox({ id }: User) {
   await db.query(sql`

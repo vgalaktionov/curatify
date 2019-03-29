@@ -1,21 +1,6 @@
 import * as db from "./db";
 import sql from "pg-template-tag";
-
-export interface Playlist {
-  id: string;
-  user_id: string;
-  name: string;
-  images: any[];
-  artist_affinities?: Map<string, number>;
-  genre_affinities?: Map<string, number>;
-  playlist_type?: PlaylistType;
-}
-
-enum PlaylistType {
-  Ignored = "ignored",
-  Curated = "curated",
-  Inbox = "inbox"
-}
+import { Playlist, PlaylistType } from "../../types";
 
 export async function upsertPlaylists(playlists: Playlist[]) {
   await db.query(sql`INSERT INTO playlists (id, user_id, name, images)

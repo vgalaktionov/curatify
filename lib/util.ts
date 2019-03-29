@@ -29,9 +29,37 @@ export default function extend() {
     }
   });
 
+  Object.defineProperty(Array.prototype, "maxBy", {
+    value<T, K extends keyof T>(prop: K): T {
+      let max: T;
+      this.forEach((el: T) => {
+        if (!max || el[prop] > max[prop]) {
+          max = el;
+        }
+      });
+      return max;
+    }
+  });
+
+  Object.defineProperty(Array.prototype, "minBy", {
+    value<T, K extends keyof T>(prop: K): T {
+      let min: T;
+      this.forEach((el: T) => {
+        if (!min || el[prop] < min[prop]) {
+          min = el;
+        }
+      });
+      return min;
+    }
+  });
+
   Object.defineProperty(Object, "pick", {
-    value<T>(keys: string[]): Pick<T, keyof T> {
-      return Object.assign({}, ...keys.map(key => ({ [key]: this[key] })));
+    value<T>(obj: T, keys: string[]): Pick<T, keyof T> {
+      const selected: { [index: string]: T[keyof T] } = {};
+      keys.forEach(key => {
+        selected[key] = obj[key as keyof T];
+      });
+      return selected as Pick<T, keyof T>;
     }
   });
 

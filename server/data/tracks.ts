@@ -1,17 +1,6 @@
-import { Artist } from "./artists";
 import * as db from "./db";
 import sql from "pg-template-tag";
-
-export interface Track {
-  id: string;
-  name: string;
-  artists?: Artist[];
-}
-
-export interface PlaylistTrack {
-  playlist_id: string;
-  track_id: string;
-}
+import { Track, PlaylistTrack } from "../../types";
 
 export async function upsertTracks(tracks: Track[]) {
   await db.query(sql`

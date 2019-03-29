@@ -1,18 +1,6 @@
-import { Image } from "./spotifyTypes";
+import { Artist, ArtistTrack } from "./../../types";
 import * as db from "./db";
 import sql from "pg-template-tag";
-
-export interface Artist {
-  id: string;
-  name: string;
-  genres?: string[];
-  images?: Image[];
-}
-
-export interface ArtistTrack {
-  artist_id: string;
-  track_id: string;
-}
 
 export async function upsertArtists(artists: Artist[]) {
   await db.query(sql`

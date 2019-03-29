@@ -2,11 +2,11 @@ import {
   updatePlaylistArtistAffinities,
   updatePlaylistGenreAffinities,
   allPlaylists,
-  userCuratedPlaylists,
-  Playlist
+  userCuratedPlaylists
 } from "../data/playlists";
 import { userUnheardInbox, updateTrackPlaylistMatches } from "../data/inbox";
-import { allUsers, User } from "../data/users";
+import { allUsers } from "../data/users";
+import { Playlist, User } from "../../types";
 
 export async function analyzeAll() {
   const playlists = await allPlaylists();
@@ -22,8 +22,8 @@ export async function analyzeAll() {
 
   await Promise.all(
     users.map(async user => {
-      console.info(`analyzing for user ${user.id}...`);
       await calculateTrackPlaylistMatches(user);
+      console.info(`analyzed for user ${user.id}...`);
     })
   );
 }

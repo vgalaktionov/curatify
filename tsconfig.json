@@ -5,13 +5,24 @@
     "target": "es6",
     "noImplicitAny": true,
     "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
     "lib": ["esnext.array", "es2018", "dom"],
+    "jsx": "react",
+    "module": "commonjs",
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
   },
   "include": [
-    "./server/**/*"
+    "./server/**/*",
+    "./client/**/*",
+    "./lib/**/*",
+    "./types/**/*"
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
+  "typeAcquisition": {
+    "enable": true
+  }
 }

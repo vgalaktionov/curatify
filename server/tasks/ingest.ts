@@ -1,17 +1,16 @@
-import { Artist } from "./../data/artists";
-import { Playlist } from "./../data/playlists";
-import { User } from "./../data/users";
+import * as R from "remeda";
+
 import { SpotifyClient, SpotifyUserClient } from "../../lib/spotify";
-import { upsertUser, allUsers, Token } from "../data/users";
+import { upsertUser, allUsers } from "../data/users";
 import { upsertPlaylists, userPlaylists } from "../data/playlists";
 import {
   upsertTracks,
   upsertPlaylistTracks,
-  wipePlaylistTracks,
-  Track
+  wipePlaylistTracks
 } from "../data/tracks";
 import { upsertArtistTracks, upsertArtists, allIds } from "../data/artists";
 import { updateUserInbox, enrichInbox } from "../data/inbox";
+import { Token, User, Track, Artist } from "../../types";
 
 function expiring({ expiresAt }: Token): boolean {
   return Date.now() / 1000 > expiresAt - 60;
@@ -48,7 +47,6 @@ async function ingestUserPlaylistTracks(client: SpotifyUserClient, user: User) {
       for await (const page of client.playlistTracks(playlist.id)) {
         tracks.push(...page.map(t => t.track));
       }
-
       tracks = tracks
         .filter(t => t !== null)
         .filter(t => !!t.id)

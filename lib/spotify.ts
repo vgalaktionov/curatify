@@ -1,12 +1,8 @@
-import { PlaylistTrack, Track } from "./../server/data/tracks";
-import { User } from "./../server/data/users";
-import { Artist } from "./../server/data/artists";
 import axios, { AxiosInstance } from "axios";
-import axiosRetry from "axios-retry";
+import rax = require("retry-axios");
 import { stringify } from "querystring";
-import camelcaseKeys from "camelcase-keys";
-import { Token } from "../server/data/users";
-import { Playlist } from "../server/data/playlists";
+import camelcaseKeys = require("camelcase-keys");
+import { Track, Token, Artist, User, Playlist } from "../types";
 
 interface WrappedPlaylistTrack {
   track: Track;
@@ -37,7 +33,7 @@ export class SpotifyClient {
       baseURL: "https://api.spotify.com/v1",
       headers: { Authorization: `Bearer ${token.accessToken}` }
     });
-    axiosRetry(this.api, { retries: 3 });
+    rax.attach(this.api);
   }
 
   static enrichToken(token: Token): Token {

@@ -1,9 +1,9 @@
-declare module "pg-template-tag";
-
 interface Array<T> {
   chunks(chunkSize: number): T[][];
   uniqueBy<K extends keyof T>(prop: K): T[];
   sum(): number;
+  maxBy<K extends keyof T>(prop: K): T;
+  minBy<K extends keyof T>(prop: K): T;
 }
 
 interface ObjectConstructor {
