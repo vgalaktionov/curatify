@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "outDir": "./built",
+    "allowJs": true,
+    "target": "es6",
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "lib": ["esnext.array", "es2018", "dom"],
+  },
+  "include": [
+    "./server/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

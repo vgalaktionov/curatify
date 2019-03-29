@@ -9,7 +9,7 @@ module.exports = {
   },
   parser: 'babel-eslint',
   extends: [
-    'eslint:recommended',
+    // 'eslint:recommended',
     'standard', 'standard-react'
   ],
   // add your custom rules here
@@ -31,7 +31,7 @@ module.exports = {
     "no-return-await": "error",
     "no-undef": "error",
     "react/prop-types": 0,
-    "template-tag-spacing": 0,
-    "camelcase": ["error", {"properties": "never", "ignoreDestructuring": true}]
+    "camelcase": ["error", {"properties": "never", "ignoreDestructuring": true}],
+    "template-tag-spacing": ["error", "always"]
   }
 }

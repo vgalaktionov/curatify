@@ -3,7 +3,7 @@ import { SpotifyUserClient } from '../lib/spotify'
 import { upsertUser } from './data/users'
 import { updateUserToken } from './tasks/ingest'
 
-const auth = new express.Router()
+const auth = express.Router()
 
 auth.get('/login', (req, res) => {
   res.redirect(SpotifyUserClient.authUrl())
