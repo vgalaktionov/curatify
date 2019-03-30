@@ -25,9 +25,11 @@ export interface PlaybackState {
 export interface PlaybackModel {
   playbackState: PlaybackState;
   inbox: InboxTrack[];
+  index: number;
 
   currentTrack: Select<PlaybackModel>;
   nowPlaying: Select<PlaybackModel>;
+  currentTrackIndex: Select<PlaybackModel>;
 
   setInbox: Action<PlaybackModel, InboxTrack[]>;
   setPlaybackState: Action<PlaybackModel, PlaybackState | null>;
@@ -60,6 +62,8 @@ const playbackModel: PlaybackModel = {
       }
     }
   },
+  index: 0,
+
   currentTrack: select(({ playbackState: { track_window: { current_track: track } }, inbox }) => {
     track.linked_from_uri = track.linked_from_uri || "";
     return {
@@ -70,6 +74,18 @@ const playbackModel: PlaybackModel = {
     };
   }),
   nowPlaying: select(state => state.playbackState.paused === false),
+
+  currentTrackIndex: select(
+    ({
+      playbackState: {
+        track_window: { current_track: track }
+      },
+      inbox
+    }): number => {
+      const index = inbox.findIndex(t => t.track_id === track.id);
+      return index === -1 ? 0 : index;
+    }
+  ),
 
   setInbox(state, inbox) {
     state.inbox = inbox;

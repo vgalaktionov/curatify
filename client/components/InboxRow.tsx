@@ -13,7 +13,7 @@ interface inboxRowProps {
 export default function InboxRow({ track }: inboxRowProps) {
   const nowPlaying = useStore(state => state.playback.nowPlaying);
   const currentTrack = useStore(state => state.playback.currentTrack);
-  const thisTrack = currentTrack.id === track.track_id && nowPlaying;
+  const thisTrack = currentTrack.id === track.track_id;
   return (
     <tr key={track.track_id}>
       <td>{track.name}</td>

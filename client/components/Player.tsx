@@ -10,6 +10,7 @@ import { Status } from "../../types";
 
 export default function Player() {
   const track = useStore(state => state.playback.currentTrack);
+  const index = useStore(state => state.playback.currentTrackIndex);
   const { duration: trackDuration, position: trackPosition } = useStore(
     state => state.playback.playbackState
   );
@@ -35,11 +36,21 @@ export default function Player() {
   };
 
   const nextTrack = async () => {
-    await window.player.nextTrack();
+    await spotify.play(
+      inbox.slice(index + 1, index + 11).map(it => "spotify:track:" + it.track_id),
+      window.player._options.id,
+      trackPosition
+    );
+    setPaused(false);
   };
 
   const previousTrack = async () => {
-    await window.player.previousTrack();
+    await spotify.play(
+      inbox.slice(index - 1, index + 9).map(it => "spotify:track:" + it.track_id),
+      window.player._options.id,
+      trackPosition
+    );
+    setPaused(false);
   };
 
   const playOrPause = async () => {
@@ -48,7 +59,7 @@ export default function Player() {
       setPaused(true);
     } else {
       await spotify.play(
-        inbox.slice(0, 11).map(it => "spotify:track:" + it.track_id),
+        inbox.slice(index, index + 10).map(it => "spotify:track:" + it.track_id),
         window.player._options.id,
         trackPosition
       );
