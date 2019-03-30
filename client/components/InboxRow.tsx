@@ -26,7 +26,7 @@ export default function InboxRow({ track }: inboxRowProps) {
         let index = inbox.findIndex(t => track.track_id === t.track_id);
         index = index === -1 ? 0 : index;
         await spotify.play(
-          inbox.slice(index + 1, index + 11).map(it => "spotify:track:" + it.track_id),
+          inbox.slice(index, index + 10).map(it => "spotify:track:" + it.track_id),
           window.player._options.id,
           0
         );

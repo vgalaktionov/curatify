@@ -88,13 +88,13 @@ export default function Player() {
             value={trackPosition}
             className="progress"
             onClick={async e => {
-              const x = e.pageX - e.currentTarget.offsetLeft;
+              const x = e.pageX - (e.currentTarget.getBoundingClientRect() as DOMRect).x;
               const clickedValue = (x * e.currentTarget.max) / e.currentTarget.offsetWidth;
 
               await spotify.play(
                 inbox.slice(index, index + 10).map(it => "spotify:track:" + it.track_id),
                 window.player._options.id,
-                clickedValue - trackDuration / 9
+                clickedValue
               );
               setPaused(false);
             }}

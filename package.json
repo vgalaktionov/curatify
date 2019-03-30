@@ -21,7 +21,6 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.7.2",
-    "@types/react-onclickoutside": "^6.7.2",
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "bulma": "^0.7.4",
@@ -42,8 +41,6 @@
     "react-dom": "^16.8.3",
     "react-onclickoutside": "^6.8.0",
     "react-router-dom": "^4.3.1",
-    "react-scroll-to-component": "^1.0.2",
-    "react-simple-infinite-scroll": "0.0.1",
     "retry-axios": "^0.5.0",
     "snakecase-keys": "^2.1.0",
     "winston": "^3.2.1",
@@ -51,6 +48,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.3.4",
+    "@types/react-onclickoutside": "^6.7.2",
     "@babel/plugin-transform-runtime": "^7.3.4",
     "@types/camelcase-keys": "^4.1.0",
     "@types/cookie-session": "^2.0.36",
