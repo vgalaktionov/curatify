@@ -20,7 +20,7 @@ export default function Player() {
   const nowPlaying = useStore(state => state.playback.nowPlaying);
 
   const setTrackStatus = useActions(actions => actions.playback.setTrackStatus);
-  const token = useStore(state => state.user.me.token, []);
+  const token = useStore(state => state.user.me.token);
   const spotify = new SpotifyUserClient(token);
 
   const likeTrack = async () => {
@@ -39,7 +39,7 @@ export default function Player() {
     await spotify.play(
       inbox.slice(index + 1, index + 11).map(it => "spotify:track:" + it.track_id),
       window.player._options.id,
-      trackPosition
+      0
     );
     setPaused(false);
   };
@@ -67,6 +67,13 @@ export default function Player() {
     }
   };
 
+  const time = (ms: number) => {
+    const s = ms / 1000;
+    const minutes = Math.floor(s / 60);
+    const seconds = String(Math.floor(s % 60)).padStart(2, "0");
+    return `${minutes}:${seconds}`;
+  };
+
   return (
     <div className="column player">
       <div className="columns">
@@ -74,7 +81,24 @@ export default function Player() {
       </div>
       <div className="columns">
         <div className="column is-12 has-text-centered">
-          <progress max={trackDuration} value={trackPosition} className="progress" />
+          <span className="is-pulled-left">{time(trackPosition)}</span>
+          <span className="is-pulled-right">{time(trackDuration)}</span>
+          <progress
+            max={trackDuration}
+            value={trackPosition}
+            className="progress"
+            onClick={async e => {
+              const x = e.pageX - e.currentTarget.offsetLeft;
+              const clickedValue = (x * e.currentTarget.max) / e.currentTarget.offsetWidth;
+
+              await spotify.play(
+                inbox.slice(index, index + 10).map(it => "spotify:track:" + it.track_id),
+                window.player._options.id,
+                clickedValue - trackDuration / 9
+              );
+              setPaused(false);
+            }}
+          />
         </div>
       </div>
       <div className="columns playback-buttons is-vcentered has-text-centered">

@@ -30,6 +30,7 @@ export interface PlaybackModel {
   currentTrack: Select<PlaybackModel>;
   nowPlaying: Select<PlaybackModel>;
   currentTrackIndex: Select<PlaybackModel>;
+  currentInbox: Select<PlaybackModel>;
 
   setInbox: Action<PlaybackModel, InboxTrack[]>;
   setPlaybackState: Action<PlaybackModel, PlaybackState | null>;
@@ -82,8 +83,28 @@ const playbackModel: PlaybackModel = {
       },
       inbox
     }): number => {
-      const index = inbox.findIndex(t => t.track_id === track.id);
+      const index = inbox.findIndex(t =>
+        [track.id, track.linked_from_uri.replace("spotify:track:", "")].includes(t.track_id)
+      );
       return index === -1 ? 0 : index;
+    }
+  ),
+
+  currentInbox: select(
+    ({
+      playbackState: {
+        track_window: { current_track: track }
+      },
+      inbox,
+      currentTrackIndex
+    }): InboxTrack[] => {
+      const index = inbox.findIndex(t =>
+        [track.id, track.linked_from_uri.replace("spotify:track:", "")].includes(t.track_id)
+      );
+      const sliceStart = Math.max(0, currentTrackIndex - 4);
+      const sliceEnd = Math.min(sliceStart + 10, inbox.length);
+      const currentTracks = inbox.slice(sliceStart, sliceEnd);
+      return currentTracks;
     }
   ),
 
