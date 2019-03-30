@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, FunctionComponent } from "react";
 import { NavLink as Link } from "react-router-dom";
+import onClickOutside from "react-onclickoutside";
 
 import { useStore } from "../store";
 
@@ -7,13 +8,12 @@ import logo from "../static/logo_transparent.png";
 
 interface MenuProps {
   isActive: boolean;
-  onBlur: () => void;
 }
 
-const Menu = ({ isActive, onBlur }: MenuProps) => {
+const Menu = ({ isActive }: MenuProps) => {
   const user = useStore(state => state.user.me);
   return (
-    <div className={`navbar-menu ${isActive && "is-active"}`} onBlur={onBlur}>
+    <div className={`navbar-menu ${isActive && "is-active"}`}>
       <div className="navbar-start">
         <Link to="/curate" className="navbar-item" activeClassName="is-active">
           Curate
@@ -34,10 +34,17 @@ const Menu = ({ isActive, onBlur }: MenuProps) => {
   );
 };
 
-export default function Navbar() {
+interface Nav extends React.SFC {
+  handleClickOutside?: Function;
+}
+
+const Navbar: Nav = () => {
   const [showMenu, setShowMenu] = useState(false);
+  Navbar.handleClickOutside = () => {
+    setShowMenu(false);
+  };
   return (
-    <nav className="navbar" tabIndex={1}>
+    <nav className="navbar">
       <div className="navbar-brand">
         <a href="/" className="navbar-item is-logo">
           <img src={logo} />
@@ -54,7 +61,11 @@ export default function Navbar() {
           <span aria-hidden="true" />
         </a>
       </div>
-      <Menu isActive={showMenu} onBlur={() => setShowMenu(false)} />
+      <Menu isActive={showMenu} />
     </nav>
   );
-}
+};
+
+export default onClickOutside(Navbar, {
+  handleClickOutside: () => Navbar.handleClickOutside
+});

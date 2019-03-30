@@ -28,7 +28,7 @@ export default function Playlists() {
 
   const width = useWindowWidth();
 
-  let list;
+  let list = [];
   if (width > 1200) {
     const col1: Playlist[] = [];
     const col2: Playlist[] = [];
@@ -41,34 +41,39 @@ export default function Playlists() {
   }
 
   return (
-    <div className="columns is-centered">
-      {list.map((c, i) => (
-        <div className="column is-4 has-text-centered">
-          <table className="table center-table playlist-table">
-            <tbody>
-              {c.map(p => {
-                return <PlaylistRow key={p.id + i} playlist={p} />;
-              })}
-            </tbody>
-          </table>
-        </div>
-      ))}
-      <div className="column is-3 has-text-centered">
-        <button
-          className="button is-outlined is-info"
-          onClick={async () => {
-            await axios.post("/api/inbox/refetch");
-          }}
-        >
-          Fetch data from Spotify now
-        </button>
-        <br />
-        <br />
-        <p>
-          We refresh your Spotify data every 5 minutes, but you can trigger a manual refresh if
-          needed.
-        </p>
+    <React.Fragment>
+      <div className="columns is-centered">
+        {list.map((c, i) => (
+          <div className="column is-4 has-text-centered" key={i}>
+            <table className="table center-table playlist-table">
+              <tbody>
+                {c.map(p => {
+                  return <PlaylistRow key={p.id} playlist={p} />;
+                })}
+              </tbody>
+            </table>
+          </div>
+        ))}
       </div>
-    </div>
+      <hr />
+      <div className="columns is-centered has-margin-top-10">
+        <div className="column is-3 has-text-centered">
+          <button
+            className="button is-outlined is-info"
+            onClick={async () => {
+              await axios.post("/api/inbox/refetch");
+            }}
+          >
+            Fetch data from Spotify now
+          </button>
+          <br />
+          <br />
+          <p>
+            We refresh your Spotify data every 5 minutes, but you can trigger a manual refresh if
+            needed.
+          </p>
+        </div>
+      </div>
+    </React.Fragment>
   );
 }
