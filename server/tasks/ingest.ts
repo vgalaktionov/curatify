@@ -1,6 +1,6 @@
 import { SpotifyClient, SpotifyUserClient } from "../../lib/spotify";
 import { upsertUser, allUsers } from "../data/users";
-import { upsertPlaylists, userPlaylists } from "../data/playlists";
+import { upsertPlaylists, userNotIgnoredPlaylists } from "../data/playlists";
 import { upsertTracks, upsertPlaylistTracks, wipePlaylistTracks } from "../data/tracks";
 import { upsertArtistTracks, upsertArtists, allIds } from "../data/artists";
 import { updateUserInbox, enrichInbox } from "../data/inbox";
@@ -36,7 +36,7 @@ async function ingestUserPlaylists(client: SpotifyUserClient, user: User) {
 }
 
 async function ingestUserPlaylistTracks(client: SpotifyUserClient, user: User) {
-  const playlists = await userPlaylists(user.id);
+  const playlists = await userNotIgnoredPlaylists(user.id);
   await Promise.all(
     playlists.map(async playlist => {
       let tracks = [];

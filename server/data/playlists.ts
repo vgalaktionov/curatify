@@ -14,15 +14,24 @@ export async function upsertPlaylists(playlists: Playlist[]) {
 }
 
 export async function userPlaylists(userId: string) {
-  const res = await db.query(
-    sql`SELECT * FROM playlists WHERE user_id = ${userId};`
-  );
+  const res = await db.query(sql`SELECT * FROM playlists WHERE user_id = ${userId};`);
   return res.rows;
 }
 
 export async function userCuratedPlaylists(userId: string) {
   const res = await db.query(
-    sql`SELECT * FROM playlists WHERE user_id = ${userId} AND playlist_type = 'curated';`
+    sql`SELECT * FROM playlists WHERE user_id = ${userId} AND playlist_type = ${
+      PlaylistType.Curated
+    };`
+  );
+  return res.rows;
+}
+
+export async function userNotIgnoredPlaylists(userId: string) {
+  const res = await db.query(
+    sql`SELECT * FROM playlists WHERE user_id = ${userId} AND playlist_type != ${
+      PlaylistType.Ignored
+    };`
   );
   return res.rows;
 }
@@ -75,7 +84,5 @@ export async function updatePlaylistGenreAffinities({ id }: Playlist) {
 }
 
 export async function updatePlaylistType(id: string, type: PlaylistType) {
-  await db.query(
-    sql`update playlists set playlist_type = ${type} where id = ${id};`
-  );
+  await db.query(sql`update playlists set playlist_type = ${type} where id = ${id};`);
 }
