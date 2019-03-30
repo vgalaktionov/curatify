@@ -10,17 +10,9 @@ import { Playlist, User } from "../../types";
 import { maxKey, sum, pick } from "../../lib/util";
 
 export async function analyzeAll() {
-  const playlists = await allPlaylists();
-
-  await Promise.all(
-    playlists.map(async (p: Playlist) => {
-      await updatePlaylistArtistAffinities(p);
-      await updatePlaylistGenreAffinities(p);
-    })
-  );
+  await updateAffinities();
 
   const users = await allUsers();
-
   await Promise.all(
     users.map(async user => {
       await calculateTrackPlaylistMatches(user);
@@ -29,7 +21,17 @@ export async function analyzeAll() {
   );
 }
 
-async function calculateTrackPlaylistMatches(user: User) {
+export async function updateAffinities() {
+  const playlists = await allPlaylists();
+  await Promise.all(
+    playlists.map(async (p: Playlist) => {
+      await updatePlaylistArtistAffinities(p);
+      await updatePlaylistGenreAffinities(p);
+    })
+  );
+}
+
+export async function calculateTrackPlaylistMatches(user: User) {
   const playlists = await userCuratedPlaylists(user.id);
   const unheard = await userUnheardInbox(user);
 

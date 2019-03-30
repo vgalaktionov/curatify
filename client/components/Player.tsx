@@ -24,14 +24,14 @@ export default function Player() {
 
   const likeTrack = async () => {
     await axios.put(`/api/tracks/${track.id}/like`);
-    await spotify.addTrackToPlaylist(track.id, track.playlist_matches);
-    setTrackStatus({ trackId: track.id, status: Status.Liked });
+    if (!track.added) await spotify.addTrackToPlaylist(track.id, track.playlist_matches);
+    setTrackStatus({ trackId: track.id, status: Status.Liked, added: true });
   };
 
   const dislikeTrack = async () => {
     axios.put(`/api/tracks/${track.id}/dislike`);
     await nextTrack();
-    setTrackStatus({ trackId: track.id, status: Status.Disliked });
+    setTrackStatus({ trackId: track.id, status: Status.Disliked, added: track.added });
   };
 
   const nextTrack = async () => {

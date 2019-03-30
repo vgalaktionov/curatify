@@ -12,7 +12,7 @@ export async function updateUserInbox({ id }: User) {
     WHERE p.user_id = ${id}
     AND p.playlist_type = 'inbox'
     AND pt.track_id NOT IN (
-        SELECT id FROM playlist_tracks pt
+        SELECT id FROM playlists_tracks pt
         WHERE p.user_id = ${id}
         AND p.playlist_type = 'curated'
     )

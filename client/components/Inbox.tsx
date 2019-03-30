@@ -1,9 +1,16 @@
 import * as React from "react";
-import { useStore } from "../store";
+import { useStore, useActions } from "../store";
 import InboxRow from "./InboxRow";
+import { useEffect } from "react";
 
 export default function InboxList() {
   const inbox = useStore(store => store.playback.inbox);
+  const initialFetchInbox = useActions(actions => actions.playback.getInbox);
+  const initialFetchPlaylists = useActions(actions => actions.playlists.getPlaylists);
+  useEffect(() => {
+    if (!inbox.length) initialFetchInbox();
+    initialFetchPlaylists();
+  }, []);
   return (
     <div className="column is-5 is-hidden-touch">
       <table className="table column is-12 center-table">

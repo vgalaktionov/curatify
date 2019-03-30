@@ -1,7 +1,6 @@
-import { select, listen, thunk, Select, Action, Listen } from "easy-peasy";
+import { select, thunk, Select, Action, Thunk } from "easy-peasy";
 import axios from "axios";
 
-import userModel from "./user";
 import { Image, InboxTrack, Status } from "../../types";
 
 export interface Album {
@@ -32,15 +31,11 @@ export interface PlaybackModel {
 
   setInbox: Action<PlaybackModel, InboxTrack[]>;
   setPlaybackState: Action<PlaybackModel, PlaybackState | null>;
-  setTrackStatus: Action<PlaybackModel, { trackId: string; status: Status }>;
-  setMatchingPlaylist: Action<
-    PlaybackModel,
-    { trackId: string; playlistId: string }
-  >;
+  setTrackStatus: Action<PlaybackModel, { trackId: string; status: Status; added?: boolean }>;
+  setMatchingPlaylist: Action<PlaybackModel, { trackId: string; playlistId: string }>;
   setPaused: Action<PlaybackModel, boolean>;
 
-  // getInbox: Thunk<PlaybackModel>;
-  listeners: Listen<PlaybackModel>;
+  getInbox: Thunk<PlaybackModel>;
 }
 
 const playbackModel: PlaybackModel = {
@@ -65,25 +60,15 @@ const playbackModel: PlaybackModel = {
       }
     }
   },
-  currentTrack: select(
-    ({
-      playbackState: {
-        track_window: { current_track: track }
-      },
-      inbox
-    }) => {
-      track.linked_from_uri = track.linked_from_uri || "";
-      return {
-        ...track,
-        ...(inbox.find(t => {
-          return [
-            track.id,
-            track.linked_from_uri.replace("spotify:track:", "")
-          ].includes(t.track_id);
-        }) || {})
-      };
-    }
-  ),
+  currentTrack: select(({ playbackState: { track_window: { current_track: track } }, inbox }) => {
+    track.linked_from_uri = track.linked_from_uri || "";
+    return {
+      ...track,
+      ...(inbox.find(t => {
+        return [track.id, track.linked_from_uri.replace("spotify:track:", "")].includes(t.track_id);
+      }) || {})
+    };
+  }),
   nowPlaying: select(state => state.playbackState.paused === false),
 
   setInbox(state, inbox) {
@@ -92,12 +77,13 @@ const playbackModel: PlaybackModel = {
   setPlaybackState(state, playbackState) {
     state.playbackState = playbackState || state.playbackState;
   },
-  setTrackStatus(state, { trackId, status }) {
+  setTrackStatus(state, { trackId, status, added = false }) {
     state.inbox = state.inbox.map(t =>
       t.track_id === trackId
         ? {
             ...t,
-            status
+            status,
+            added
           }
         : t
     );
@@ -116,14 +102,9 @@ const playbackModel: PlaybackModel = {
     state.playbackState.paused = false;
   },
 
-  listeners: listen(on => {
-    on(
-      userModel.setUser,
-      thunk(async actions => {
-        const { data: inbox } = await axios.get("/api/inbox");
-        actions.setInbox(inbox);
-      })
-    );
+  getInbox: thunk(async actions => {
+    const { data: inbox } = await axios.get("/api/inbox");
+    actions.setInbox(inbox);
   })
 };
 

@@ -1,7 +1,6 @@
 import axios from "axios";
-import { thunk, listen, Action, Thunk, Listen } from "easy-peasy";
+import { thunk, Action, Thunk } from "easy-peasy";
 
-import userModel from "./user";
 import { Playlist, PlaylistType } from "../../types";
 
 export interface PlaylistsModel {
@@ -10,10 +9,8 @@ export interface PlaylistsModel {
   setPlaylists: Action<PlaylistsModel, Playlist[]>;
   setPlaylistType: Action<PlaylistsModel, { id: string; type: PlaylistType }>;
 
-  // getPlaylists: Thunk<PlaylistsModel>;
+  getPlaylists: Thunk<PlaylistsModel>;
   patchPlaylistType: Thunk<PlaylistsModel, { id: string; type: PlaylistType }>;
-
-  listeners: Listen<PlaylistsModel>;
 }
 
 const playlistsModel: PlaylistsModel = {
@@ -39,14 +36,9 @@ const playlistsModel: PlaylistsModel = {
     });
   }),
 
-  listeners: listen(on => {
-    on(
-      userModel.setUser,
-      thunk(async actions => {
-        const { data: playlists } = await axios.get("/api/playlists");
-        actions.setPlaylists(playlists);
-      })
-    );
+  getPlaylists: thunk(async actions => {
+    const { data: playlists } = await axios.get("/api/playlists");
+    actions.setPlaylists(playlists);
   })
 };
 

@@ -85,7 +85,7 @@ async function ingestTrackArtists(tracks: Track[]) {
   );
 }
 
-async function ingestForUser(user: User) {
+export async function ingestForUser(user: User) {
   console.info(`ingesting for user ${user.id}...`);
   user = await updateUserToken(user);
   const client = new SpotifyUserClient(user.token);

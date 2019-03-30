@@ -1,7 +1,7 @@
 import React from "react";
 
 import { useActions, useStore } from "../store";
-import { InboxTrack } from "../../types";
+import { InboxTrack, PlaylistType } from "../../types";
 
 interface SelectMatchingPlaylistProps {
   track: InboxTrack;
@@ -10,9 +10,7 @@ interface SelectMatchingPlaylistProps {
 export default ({ track }: SelectMatchingPlaylistProps) => {
   const playlists = useStore(state => state.playlists.playlists);
   const matchingPlaylist = playlists.find(p => p.id === track.playlist_matches);
-  const setMatchingPlaylist = useActions(
-    actions => actions.playback.setMatchingPlaylist
-  );
+  const setMatchingPlaylist = useActions(actions => actions.playback.setMatchingPlaylist);
   return (
     <div className="field">
       <label htmlFor="matches" className="is-small">
@@ -30,11 +28,13 @@ export default ({ track }: SelectMatchingPlaylistProps) => {
                 });
               }}
             >
-              {playlists.map(playlist => (
-                <option key={playlist.id} value={playlist.id}>
-                  {playlist.name}
-                </option>
-              ))}
+              {playlists
+                .filter(playlist => playlist.playlist_type === PlaylistType.Curated)
+                .map(playlist => (
+                  <option key={playlist.id} value={playlist.id}>
+                    {playlist.name}
+                  </option>
+                ))}
             </select>
           </span>
         </div>

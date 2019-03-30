@@ -2,12 +2,21 @@ import * as express from "express";
 import { userPlaylists, updatePlaylistType } from "./data/playlists";
 import { userUnheardInboxRich, updateTrackStatus } from "./data/inbox";
 import { Status } from "../types";
+import { ingestForUser } from "./tasks/ingest";
+import { updateAffinities, calculateTrackPlaylistMatches } from "./tasks/analyze";
 
 const api = express.Router();
 
 api.get("/inbox", async (req, res) => {
   const inbox = await userUnheardInboxRich(req.session.user);
   res.json(inbox);
+});
+
+api.post("/inbox/refetch", async (req, res) => {
+  ingestForUser(req.session.user)
+    .then(updateAffinities)
+    .then(() => calculateTrackPlaylistMatches(req.session.user));
+  res.sendStatus(200);
 });
 
 api.get("/playlists", async (req, res) => {
