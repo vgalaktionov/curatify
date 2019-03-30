@@ -21,6 +21,7 @@ const playlists_1 = require("../data/playlists");
 const tracks_1 = require("../data/tracks");
 const artists_1 = require("../data/artists");
 const inbox_1 = require("../data/inbox");
+const util_1 = require("../../lib/util");
 function expiring({ expiresAt }) {
     return Date.now() / 1000 > expiresAt - 60;
 }
@@ -77,10 +78,7 @@ function ingestUserPlaylistTracks(client, user) {
                 }
                 finally { if (e_2) throw e_2.error; }
             }
-            tracks = tracks
-                .filter(t => t !== null)
-                .filter(t => !!t.id)
-                .uniqueBy("id");
+            tracks = util_1.uniqueBy(tracks.filter(t => t !== null).filter(t => !!t.id), "id");
             yield tracks_1.upsertTracks(tracks.map(track => ({
                 id: track.id,
                 name: track.name
@@ -96,12 +94,10 @@ function ingestUserPlaylistTracks(client, user) {
 }
 function ingestTrackArtists(tracks) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield artists_1.upsertArtists(tracks
+        yield artists_1.upsertArtists(util_1.uniqueBy(tracks
             .map(t => t.artists)
             .flat()
-            .filter(a => !!a.id)
-            .uniqueBy("id")
-            .map(({ id, name }) => ({ id, name })));
+            .filter(a => !!a.id), "id").map(({ id, name }) => ({ id, name })));
         yield artists_1.upsertArtistTracks(tracks
             .map(track => track.artists.map(({ id }) => ({
             artist_id: id,
@@ -126,9 +122,9 @@ function ingestForUser(user) {
 function ingestArtistDetails(client) {
     return __awaiter(this, void 0, void 0, function* () {
         const ids = yield artists_1.allIds();
-        yield Promise.all(ids.chunks(50).map((chunk) => __awaiter(this, void 0, void 0, function* () {
+        yield Promise.all(util_1.chunks(ids, 50).map((chunk) => __awaiter(this, void 0, void 0, function* () {
             const artists = yield client.artists(chunk);
-            yield artists_1.upsertArtists(artists.map(a => Object.pick(a, ["id", "name", "genres", "images"])));
+            yield artists_1.upsertArtists(artists.map(a => util_1.pick(a, ["id", "name", "genres", "images"])));
         })));
     });
 }

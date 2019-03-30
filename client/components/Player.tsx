@@ -4,69 +4,9 @@ import axios from "axios";
 
 import { useActions, useStore } from "../store";
 import { SpotifyUserClient } from "../../lib/spotify";
-import Icon from "./Icon";
-import { Status, InboxTrack, Image } from "../../types";
-
-interface RichInboxTrack extends InboxTrack {
-  album: {
-    images: Image[];
-  };
-}
-
-interface CurrentlyPlayingProps {
-  track: RichInboxTrack;
-}
-
-function CurrentlyPlaying({ track }: CurrentlyPlayingProps) {
-  const imageUrl = track.album.images.maxBy("height").url;
-  const playlists = useStore(state => state.playlists.playlists);
-  const matchingPlaylist = playlists.find(p => p.id === track.playlist_matches);
-  const setMatchingPlaylist = useActions(
-    actions => actions.playback.setMatchingPlaylist
-  );
-
-  return (
-    <div className="column is-12 has-text-centered currently-playing">
-      <img src={imageUrl} />
-      <h5 className="is-size-5 has-text-weight-semibold">{track.name}</h5>
-      {track.artists && (
-        <p className="has-text-weight-semibold">
-          {track.artist_names.join(", ")}{" "}
-        </p>
-      )}
-      {track.track_id && (
-        <div className="field">
-          <label htmlFor="matches" className="is-small">
-            matches:
-            <div className="control is-centered has-text-centered">
-              <span className="select">
-                <select
-                  name="matches"
-                  className="is-small"
-                  defaultValue={matchingPlaylist.id}
-                  onChange={async e => {
-                    await setMatchingPlaylist({
-                      trackId: track.track_id,
-                      playlistId: e.target.value
-                    });
-                  }}
-                >
-                  {playlists.map(playlist => {
-                    return (
-                      <option key={playlist.id} value={playlist.id}>
-                        {playlist.name}
-                      </option>
-                    );
-                  })}
-                </select>
-              </span>
-            </div>
-          </label>
-        </div>
-      )}
-    </div>
-  );
-}
+import CurrentlyPlaying from "./CurrentlyPlaying";
+import PlaybackButton from "./PlaybackButton";
+import { Status } from "../../types";
 
 export default function Player() {
   const track = useStore(state => state.playback.currentTrack);
@@ -116,7 +56,7 @@ export default function Player() {
   };
 
   return (
-    <div className="column is-6 player">
+    <div className="column player">
       <div className="columns">
         <CurrentlyPlaying track={track} />
       </div>
@@ -130,38 +70,18 @@ export default function Player() {
         </div>
       </div>
       <div className="columns playback-buttons is-vcentered has-text-centered">
-        <div className="column is-one-fifth">
-          <button className="playback" onClick={dislikeTrack}>
-            <Icon icon="fas fa-heart-broken" size="is-large" />
-          </button>
-        </div>
-        <div className="column is-one-fifth">
-          <button className="playback" onClick={previousTrack}>
-            <Icon icon="fas fa-step-backward" size="is-large" />
-          </button>
-        </div>
-        <div className="column is-one-fifth">
-          <button
-            disabled={!playerReady}
-            className="playback"
-            onClick={playOrPause}
-          >
-            <Icon
-              icon={nowPlaying ? "fas fa-pause" : "fas fa-play"}
-              size="is-large"
-            />
-          </button>
-        </div>
-        <div className="column is-one-fifth">
-          <button className="playback" onClick={nextTrack}>
-            <Icon icon="fas fa-step-forward" size="is-large" />
-          </button>
-        </div>
-        <div className="column is-one-fifth">
-          <button className="playback" onClick={likeTrack}>
-            <Icon icon="fas fa-heart" size="is-large" />
-          </button>
-        </div>
+        <PlaybackButton listener={dislikeTrack} iconName={"fa-heart-broken"} />
+        <PlaybackButton
+          listener={previousTrack}
+          iconName={"fa-step-backward"}
+        />
+        <PlaybackButton
+          listener={playOrPause}
+          iconName={nowPlaying ? "fas fa-pause" : "fas fa-play"}
+          disabled={!playerReady}
+        />
+        <PlaybackButton listener={nextTrack} iconName={"fa-step-forward"} />
+        <PlaybackButton listener={likeTrack} iconName={"fa-heart"} />
       </div>
     </div>
   );

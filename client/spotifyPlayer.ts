@@ -1,6 +1,6 @@
-import { PlaybackState } from "./store/storeTypes";
 /* global Spotify */
 import store from "./store";
+import { PlaybackState } from "./store/playback";
 
 declare global {
   interface Window {

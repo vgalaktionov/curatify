@@ -1,7 +1,3 @@
-/* eslint-disable import/first */
-import extend from "../lib/util";
-extend();
-
 import React from "react";
 import { useEffect } from "react";
 import ReactDOM from "react-dom";
@@ -12,12 +8,7 @@ import spotifyPlayer from "./spotifyPlayer";
 import Loading from "./components/Loading";
 import Main from "./components/Main";
 import store, { useStore, useActions } from "./store";
-
-import "bulma/css/bulma.min.css";
-import "bulmaswatch/lux/bulmaswatch.min.css";
-import "bulmaswatch/lux/bulmaswatch.min.css";
-import "@fortawesome/fontawesome-free/css/all.min.css";
-import "./index.css";
+import { forceRenderStyles } from "typestyle";
 
 spotifyPlayer();
 
@@ -43,3 +34,5 @@ ReactDOM.render(
   </StoreProvider>,
   document.querySelector("#app")
 );
+
+forceRenderStyles();

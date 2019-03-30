@@ -15,33 +15,9 @@ const react_1 = __importDefault(require("react"));
 const axios_1 = __importDefault(require("axios"));
 const store_1 = require("../store");
 const spotify_1 = require("../../lib/spotify");
-const Icon_1 = __importDefault(require("./Icon"));
+const CurrentlyPlaying_1 = __importDefault(require("./CurrentlyPlaying"));
+const PlaybackButton_1 = __importDefault(require("./PlaybackButton"));
 const types_1 = require("../../types");
-function CurrentlyPlaying({ track }) {
-    const imageUrl = track.album.images.maxBy("height").url;
-    const playlists = store_1.useStore(state => state.playlists.playlists);
-    const matchingPlaylist = playlists.find(p => p.id === track.playlist_matches);
-    const setMatchingPlaylist = store_1.useActions(actions => actions.playback.setMatchingPlaylist);
-    return (react_1.default.createElement("div", { className: "column is-12 has-text-centered currently-playing" },
-        react_1.default.createElement("img", { src: imageUrl }),
-        react_1.default.createElement("h5", { className: "is-size-5 has-text-weight-semibold" }, track.name),
-        track.artists && (react_1.default.createElement("p", { className: "has-text-weight-semibold" },
-            track.artist_names.join(", "),
-            " ")),
-        track.track_id && (react_1.default.createElement("div", { className: "field" },
-            react_1.default.createElement("label", { htmlFor: "matches", className: "is-small" },
-                "matches:",
-                react_1.default.createElement("div", { className: "control is-centered has-text-centered" },
-                    react_1.default.createElement("span", { className: "select" },
-                        react_1.default.createElement("select", { name: "matches", className: "is-small", defaultValue: matchingPlaylist.id, onChange: (e) => __awaiter(this, void 0, void 0, function* () {
-                                yield setMatchingPlaylist({
-                                    trackId: track.track_id,
-                                    playlistId: e.target.value
-                                });
-                            }) }, playlists.map(playlist => {
-                            return (react_1.default.createElement("option", { key: playlist.id, value: playlist.id }, playlist.name));
-                        })))))))));
-}
 function Player() {
     const track = store_1.useStore(state => state.playback.currentTrack);
     const { duration: trackDuration, position: trackPosition } = store_1.useStore(state => state.playback.playbackState);
@@ -78,28 +54,18 @@ function Player() {
             setPaused(false);
         }
     });
-    return (react_1.default.createElement("div", { className: "column is-6 player" },
+    return (react_1.default.createElement("div", { className: "column player" },
         react_1.default.createElement("div", { className: "columns" },
-            react_1.default.createElement(CurrentlyPlaying, { track: track })),
+            react_1.default.createElement(CurrentlyPlaying_1.default, { track: track })),
         react_1.default.createElement("div", { className: "columns" },
             react_1.default.createElement("div", { className: "column is-12 has-text-centered" },
                 react_1.default.createElement("progress", { max: trackDuration, value: trackPosition, className: "progress" }))),
         react_1.default.createElement("div", { className: "columns playback-buttons is-vcentered has-text-centered" },
-            react_1.default.createElement("div", { className: "column is-one-fifth" },
-                react_1.default.createElement("button", { className: "playback", onClick: dislikeTrack },
-                    react_1.default.createElement(Icon_1.default, { icon: "fas fa-heart-broken", size: "is-large" }))),
-            react_1.default.createElement("div", { className: "column is-one-fifth" },
-                react_1.default.createElement("button", { className: "playback", onClick: previousTrack },
-                    react_1.default.createElement(Icon_1.default, { icon: "fas fa-step-backward", size: "is-large" }))),
-            react_1.default.createElement("div", { className: "column is-one-fifth" },
-                react_1.default.createElement("button", { disabled: !playerReady, className: "playback", onClick: playOrPause },
-                    react_1.default.createElement(Icon_1.default, { icon: nowPlaying ? "fas fa-pause" : "fas fa-play", size: "is-large" }))),
-            react_1.default.createElement("div", { className: "column is-one-fifth" },
-                react_1.default.createElement("button", { className: "playback", onClick: nextTrack },
-                    react_1.default.createElement(Icon_1.default, { icon: "fas fa-step-forward", size: "is-large" }))),
-            react_1.default.createElement("div", { className: "column is-one-fifth" },
-                react_1.default.createElement("button", { className: "playback", onClick: likeTrack },
-                    react_1.default.createElement(Icon_1.default, { icon: "fas fa-heart", size: "is-large" }))))));
+            react_1.default.createElement(PlaybackButton_1.default, { listener: dislikeTrack, iconName: "fa-heart-broken" }),
+            react_1.default.createElement(PlaybackButton_1.default, { listener: previousTrack, iconName: "fa-step-backward" }),
+            react_1.default.createElement(PlaybackButton_1.default, { listener: playOrPause, iconName: nowPlaying ? "fas fa-pause" : "fas fa-play", disabled: !playerReady }),
+            react_1.default.createElement(PlaybackButton_1.default, { listener: nextTrack, iconName: "fa-step-forward" }),
+            react_1.default.createElement(PlaybackButton_1.default, { listener: likeTrack, iconName: "fa-heart" }))));
 }
 exports.default = Player;
 //# sourceMappingURL=Player.js.map

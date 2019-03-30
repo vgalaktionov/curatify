@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const playlists_1 = require("../data/playlists");
 const inbox_1 = require("../data/inbox");
 const users_1 = require("../data/users");
+const util_1 = require("../../lib/util");
 function analyzeAll() {
     return __awaiter(this, void 0, void 0, function* () {
         const playlists = yield playlists_1.allPlaylists();
@@ -31,9 +32,9 @@ function calculateTrackPlaylistMatches(user) {
         const playlists = yield playlists_1.userCuratedPlaylists(user.id);
         const unheard = yield inbox_1.userUnheardInbox(user);
         yield Promise.all(unheard.map((track) => __awaiter(this, void 0, void 0, function* () {
-            const match = Object.max(playlists.reduce((acc, playlist) => {
-                const genreScore = Object.values(Object.pick(playlist.genre_affinities || {}, track.genres)).sum();
-                const artistScore = Object.values(Object.pick(playlist.artist_affinities || {}, track.artists)).sum();
+            const match = util_1.maxKey(playlists.reduce((acc, playlist) => {
+                const genreScore = util_1.sum(Object.values(util_1.pick(playlist.genre_affinities || {}, track.genres)));
+                const artistScore = util_1.sum(Object.values(util_1.pick(playlist.artist_affinities || {}, track.artists)));
                 return Object.assign({ [playlist.id]: artistScore + genreScore }, acc);
             }, {}));
             yield inbox_1.updateTrackPlaylistMatches(match, track.track_id, user.id);

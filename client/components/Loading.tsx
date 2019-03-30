@@ -1,6 +1,6 @@
 import * as React from "react";
-// import playing from "../static/playing.svg";
-const playing = "";
+
+import playing from "../static/playing.svg";
 
 export default function Loading() {
   return (

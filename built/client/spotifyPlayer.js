@@ -36,7 +36,7 @@ function spotifyPlayer() {
         });
         // Playback status updates
         player.addListener("player_state_changed", state => {
-            console.log(state);
+            store_1.default.dispatch.playback.setPlaybackState(state);
         });
         // Ready
         /* eslint-disable camelcase */

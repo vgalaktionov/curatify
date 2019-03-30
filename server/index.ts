@@ -1,6 +1,3 @@
-import extend from "../lib/util";
-extend();
-
 import dotenv from "dotenv";
 dotenv.config();
 

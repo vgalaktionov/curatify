@@ -1,16 +1,11 @@
-import * as R from "remeda";
-
 import { SpotifyClient, SpotifyUserClient } from "../../lib/spotify";
 import { upsertUser, allUsers } from "../data/users";
 import { upsertPlaylists, userPlaylists } from "../data/playlists";
-import {
-  upsertTracks,
-  upsertPlaylistTracks,
-  wipePlaylistTracks
-} from "../data/tracks";
+import { upsertTracks, upsertPlaylistTracks, wipePlaylistTracks } from "../data/tracks";
 import { upsertArtistTracks, upsertArtists, allIds } from "../data/artists";
 import { updateUserInbox, enrichInbox } from "../data/inbox";
 import { Token, User, Track, Artist } from "../../types";
+import { uniqueBy, chunks, pick } from "../../lib/util";
 
 function expiring({ expiresAt }: Token): boolean {
   return Date.now() / 1000 > expiresAt - 60;
@@ -47,10 +42,7 @@ async function ingestUserPlaylistTracks(client: SpotifyUserClient, user: User) {
       for await (const page of client.playlistTracks(playlist.id)) {
         tracks.push(...page.map(t => t.track));
       }
-      tracks = tracks
-        .filter(t => t !== null)
-        .filter(t => !!t.id)
-        .uniqueBy("id");
+      tracks = uniqueBy(tracks.filter(t => t !== null).filter(t => !!t.id), "id");
 
       await upsertTracks(
         tracks.map(track => ({
@@ -72,12 +64,13 @@ async function ingestUserPlaylistTracks(client: SpotifyUserClient, user: User) {
 
 async function ingestTrackArtists(tracks: Track[]) {
   await upsertArtists(
-    tracks
-      .map(t => t.artists)
-      .flat()
-      .filter(a => !!a.id)
-      .uniqueBy("id")
-      .map(({ id, name }) => ({ id, name }))
+    uniqueBy(
+      tracks
+        .map(t => t.artists)
+        .flat()
+        .filter(a => !!a.id),
+      "id"
+    ).map(({ id, name }) => ({ id, name }))
   );
 
   await upsertArtistTracks(
@@ -110,13 +103,9 @@ async function ingestForUser(user: User) {
 async function ingestArtistDetails(client: SpotifyClient) {
   const ids = await allIds();
   await Promise.all(
-    ids.chunks(50).map(async chunk => {
+    chunks(ids, 50).map(async chunk => {
       const artists = await client.artists(chunk);
-      await upsertArtists(
-        artists.map(
-          a => Object.pick(a, ["id", "name", "genres", "images"]) as Artist
-        )
-      );
+      await upsertArtists(artists.map(a => pick(a, ["id", "name", "genres", "images"]) as Artist));
     })
   );
 }

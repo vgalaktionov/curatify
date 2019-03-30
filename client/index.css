@@ -1,41 +1,37 @@
 html,
 body {
-    /*font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
     height: 100%;
 }
 
 nav {
-    /*margin-bottom: 20px;*/
     height: 90px;
 }
 
-.navbar-item.is-logo {
-  position: absolute;
-  left: 50%;
-  margin-left: -64px;
-  /* 50% */
-  height: 100%;
-  display: flex;
-  align-items: center;
+.navbar {
+    padding-left: 3rem;
+    padding-right: 3rem;
 }
 
-.navbar-item.is-logo img{
-  max-height: 100px;
+nav:focus {
+    outline: none;
+}
+
+.navbar-item.is-logo {
+    position: absolute;
+    left: 50%;
+    margin-left: -64px;
+    /* 50% */
+    height: 100%;
+    display: flex;
+    align-items: center;
 }
 
 .navbar-item.is-logo img {
-  max-height: 100px;
+    max-height: 100px;
 }
 
-.button.is-spotify {
-    background-color: transparent;
-    color: #1db954;
-    border-color: #1db954;
-}
-
-.button.is-spotify:hover {
-    background-color: #1db954;
-    color: black;
+.navbar-item.is-logo img {
+    max-height: 100px;
 }
 
 
@@ -49,22 +45,14 @@ nav {
     color: rgb(129, 135, 141);
 }
 
-.playback-buttons {
-    /*margin-left: 6rem;*/
-}
-
-
 .album-art {
     min-height: 300px;
-}
-
-.player {
-    /*margin-left: 6rem;*/
 }
 
 .currently-playing {
     height: 380px;
     min-height: 380px;
+    margin-bottom: 2rem;
 }
 
 .currently-playing img {
@@ -76,11 +64,7 @@ img.playlist-cover {
     height: 60px;
 }
 
-.center-table th {
-    text-align: center;
-    vertical-align: middle;
-}
-
+.center-table th,
 .center-table td {
     text-align: center;
     vertical-align: middle;
@@ -93,13 +77,4 @@ img.play-spinner {
 img.preloader {
     margin-top: auto;
     margin-bottom: auto;
-}
-
-img.banner {
-    height: 500px;
-    margin-bottom: -50px;
-}
-
-.login-page {
-    overflow-y: scroll;
 }

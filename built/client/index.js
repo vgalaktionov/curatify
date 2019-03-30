@@ -18,9 +18,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/* eslint-disable import/first */
-const util_1 = __importDefault(require("../lib/util"));
-util_1.default();
 const react_1 = __importDefault(require("react"));
 const react_2 = require("react");
 const react_dom_1 = __importDefault(require("react-dom"));
@@ -30,11 +27,7 @@ const spotifyPlayer_1 = __importDefault(require("./spotifyPlayer"));
 const Loading_1 = __importDefault(require("./components/Loading"));
 const Main_1 = __importDefault(require("./components/Main"));
 const store_1 = __importStar(require("./store"));
-require("bulma/css/bulma.min.css");
-require("bulmaswatch/lux/bulmaswatch.min.css");
-require("bulmaswatch/lux/bulmaswatch.min.css");
-require("@fortawesome/fontawesome-free/css/all.min.css");
-require("./index.css");
+const typestyle_1 = require("typestyle");
 spotifyPlayer_1.default();
 if (store_1.default.getState().user) {
     setInterval(() => __awaiter(this, void 0, void 0, function* () {
@@ -52,4 +45,5 @@ function App() {
 }
 react_dom_1.default.render(react_1.default.createElement(easy_peasy_1.StoreProvider, { store: store_1.default },
     react_1.default.createElement(App, null)), document.querySelector("#app"));
+typestyle_1.forceRenderStyles();
 //# sourceMappingURL=index.js.map

@@ -1,0 +1,24 @@
+html,
+body {
+    height: 100%;
+}
+
+img.banner {
+    height: 500px;
+    margin-bottom: -50px;
+}
+
+.login-page {
+    overflow-y: scroll;
+}
+
+.button.is-spotify {
+    background-color: transparent;
+    color: #1db954;
+    border-color: #1db954;
+}
+
+.button.is-spotify:hover {
+    background-color: #1db954;
+    color: black;
+}

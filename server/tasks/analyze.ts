@@ -7,6 +7,7 @@ import {
 import { userUnheardInbox, updateTrackPlaylistMatches } from "../data/inbox";
 import { allUsers } from "../data/users";
 import { Playlist, User } from "../../types";
+import { maxKey, sum, pick } from "../../lib/util";
 
 export async function analyzeAll() {
   const playlists = await allPlaylists();
@@ -34,15 +35,15 @@ async function calculateTrackPlaylistMatches(user: User) {
 
   await Promise.all(
     unheard.map(async track => {
-      const match: string = Object.max(
+      const match: string = maxKey(
         playlists.reduce((acc: Map<string, number>, playlist: Playlist) => {
-          const genreScore = Object.values(
-            Object.pick(playlist.genre_affinities || {}, track.genres)
-          ).sum();
+          const genreScore = sum(
+            Object.values(pick(playlist.genre_affinities || {}, track.genres))
+          );
 
-          const artistScore = Object.values(
-            Object.pick(playlist.artist_affinities || {}, track.artists)
-          ).sum();
+          const artistScore = sum(
+            Object.values(pick(playlist.artist_affinities || {}, track.artists))
+          );
           return {
             [playlist.id]: artistScore + genreScore,
             ...acc
