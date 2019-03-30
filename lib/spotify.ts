@@ -117,9 +117,7 @@ export class SpotifyUserClient extends SpotifyClient {
     }
   }
 
-  async *playlistTracks(
-    playlistId: string
-  ): AsyncIterable<WrappedPlaylistTrack[]> {
+  async *playlistTracks(playlistId: string): AsyncIterable<WrappedPlaylistTrack[]> {
     let next = `/playlists/${playlistId}/tracks`;
     while (next) {
       const { data } = await this.api.get(next, { params: { limit: 100 } });
@@ -128,11 +126,7 @@ export class SpotifyUserClient extends SpotifyClient {
     }
   }
 
-  async play(
-    uris: string[],
-    deviceId: string,
-    position_ms?: string
-  ): Promise<void> {
+  async play(uris: string[], deviceId: string, position_ms?: number): Promise<void> {
     await this.api.put(`/me/player/play?device_id=${deviceId}`, {
       uris,
       position_ms

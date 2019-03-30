@@ -49,7 +49,8 @@ export default function Player() {
     } else {
       await spotify.play(
         inbox.slice(0, 11).map(it => "spotify:track:" + it.track_id),
-        window.player._options.id
+        window.player._options.id,
+        trackPosition
       );
       setPaused(false);
     }
