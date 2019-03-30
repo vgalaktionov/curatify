@@ -11,6 +11,11 @@ export async function updateUserInbox({ id }: User) {
     INNER JOIN playlists p ON p.id = pt.playlist_id
     WHERE p.user_id = ${id}
     AND p.playlist_type = 'inbox'
+    AND pt.track_id NOT IN (
+        SELECT id FROM playlist_tracks pt
+        WHERE p.user_id = ${id}
+        AND p.playlist_type = 'curated'
+    )
     ON CONFLICT (user_id, track_id) DO NOTHING;
   `);
 }
@@ -22,9 +27,7 @@ export async function userUnheardInbox({ id }: User): Promise<InboxTrack[]> {
   return res.rows;
 }
 
-export async function userUnheardInboxRich({
-  id
-}: User): Promise<InboxTrack[]> {
+export async function userUnheardInboxRich({ id }: User): Promise<InboxTrack[]> {
   const res = await db.query(sql`
     SELECT *, t.name FROM inbox i
       INNER JOIN tracks t ON t.id = i.track_id
@@ -69,11 +72,7 @@ export async function updateTrackPlaylistMatches(
   `);
 }
 
-export async function updateTrackStatus(
-  trackId: string,
-  userId: string,
-  status: Status
-) {
+export async function updateTrackStatus(trackId: string, userId: string, status: Status) {
   await db.query(sql`
     UPDATE inbox SET
       status = ${status}

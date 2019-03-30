@@ -8,7 +8,6 @@ import spotifyPlayer from "./spotifyPlayer";
 import Loading from "./components/Loading";
 import Main from "./components/Main";
 import store, { useStore, useActions } from "./store";
-import { forceRenderStyles } from "typestyle";
 
 spotifyPlayer();
 
@@ -34,5 +33,3 @@ ReactDOM.render(
   </StoreProvider>,
   document.querySelector("#app")
 );
-
-forceRenderStyles();

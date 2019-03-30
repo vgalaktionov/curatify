@@ -62,26 +62,27 @@ export default function Player() {
       </div>
       <div className="columns">
         <div className="column is-12 has-text-centered">
-          <progress
-            max={trackDuration}
-            value={trackPosition}
-            className="progress"
-          />
+          <progress max={trackDuration} value={trackPosition} className="progress" />
         </div>
       </div>
       <div className="columns playback-buttons is-vcentered has-text-centered">
-        <PlaybackButton listener={dislikeTrack} iconName={"fa-heart-broken"} />
         <PlaybackButton
-          listener={previousTrack}
-          iconName={"fa-step-backward"}
+          listener={dislikeTrack}
+          iconName={"fa-heart-broken"}
+          disabled={track.status === Status.Disliked}
         />
+        <PlaybackButton listener={previousTrack} iconName={"fa-step-backward"} />
         <PlaybackButton
           listener={playOrPause}
           iconName={nowPlaying ? "fas fa-pause" : "fas fa-play"}
           disabled={!playerReady}
         />
         <PlaybackButton listener={nextTrack} iconName={"fa-step-forward"} />
-        <PlaybackButton listener={likeTrack} iconName={"fa-heart"} />
+        <PlaybackButton
+          listener={likeTrack}
+          iconName={"fa-heart"}
+          disabled={track.status === Status.Liked}
+        />
       </div>
     </div>
   );
