@@ -19,7 +19,7 @@ function extend() {
     Object.defineProperty(Array.prototype, "sum", {
         value() {
             return this.reduce((acc, cur) => {
-                return acc + cur;
+                return cur ? acc + cur : acc;
             }, 0);
         }
     });
@@ -59,7 +59,7 @@ function extend() {
             let maxKey;
             let maxValue = 0;
             Object.entries(obj).forEach(([k, v]) => {
-                if (v > maxValue) {
+                if (v > maxValue || maxValue === 0) {
                     maxKey = k;
                     maxValue = v;
                 }

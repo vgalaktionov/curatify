@@ -30,7 +30,7 @@ interface PlayerInstance {
   previousTrack(): Promise<void>;
 }
 
-interface SignalPayload {
+interface SignalPayload extends PlaybackState {
   message: string;
   device_id: string;
 }
@@ -60,7 +60,7 @@ export default function spotifyPlayer() {
 
     // Playback status updates
     player.addListener("player_state_changed", state => {
-      console.log(state);
+      store.dispatch.playback.setPlaybackState(state);
     });
 
     // Ready

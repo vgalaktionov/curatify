@@ -37,11 +37,11 @@ async function calculateTrackPlaylistMatches(user: User) {
       const match: string = Object.max(
         playlists.reduce((acc: Map<string, number>, playlist: Playlist) => {
           const genreScore = Object.values(
-            Object.pick(playlist.genre_affinities, track.genres)
+            Object.pick(playlist.genre_affinities || {}, track.genres)
           ).sum();
 
           const artistScore = Object.values(
-            Object.pick(playlist.artist_affinities, track.artists)
+            Object.pick(playlist.artist_affinities || {}, track.artists)
           ).sum();
           return {
             [playlist.id]: artistScore + genreScore,

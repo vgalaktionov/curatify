@@ -24,7 +24,7 @@ export default function extend() {
   Object.defineProperty(Array.prototype, "sum", {
     value(): number {
       return this.reduce((acc: number, cur: number) => {
-        return acc + cur;
+        return cur ? acc + cur : acc;
       }, 0);
     }
   });
@@ -68,7 +68,7 @@ export default function extend() {
       let maxKey: string;
       let maxValue = 0;
       Object.entries(obj).forEach(([k, v]: [string, number]) => {
-        if (v > maxValue) {
+        if (v > maxValue || maxValue === 0) {
           maxKey = k;
           maxValue = v;
         }

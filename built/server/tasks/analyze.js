@@ -32,8 +32,8 @@ function calculateTrackPlaylistMatches(user) {
         const unheard = yield inbox_1.userUnheardInbox(user);
         yield Promise.all(unheard.map((track) => __awaiter(this, void 0, void 0, function* () {
             const match = Object.max(playlists.reduce((acc, playlist) => {
-                const genreScore = Object.values(Object.pick(playlist.genre_affinities, track.genres)).sum();
-                const artistScore = Object.values(Object.pick(playlist.artist_affinities, track.artists)).sum();
+                const genreScore = Object.values(Object.pick(playlist.genre_affinities || {}, track.genres)).sum();
+                const artistScore = Object.values(Object.pick(playlist.artist_affinities || {}, track.artists)).sum();
                 return Object.assign({ [playlist.id]: artistScore + genreScore }, acc);
             }, {}));
             yield inbox_1.updateTrackPlaylistMatches(match, track.track_id, user.id);

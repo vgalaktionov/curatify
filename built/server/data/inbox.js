@@ -48,7 +48,8 @@ function userUnheardInboxRich({ id }) {
     SELECT *, t.name FROM inbox i
       INNER JOIN tracks t ON t.id = i.track_id
     WHERE i.user_id = ${id}
-    AND i.status = 'unheard';
+    AND i.status = 'unheard'
+    ORDER BY random();
   `);
         return res.rows;
     });
