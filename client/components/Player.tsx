@@ -81,8 +81,8 @@ export default function Player() {
       </div>
       <div className="columns">
         <div className="column is-12 has-text-centered">
-          <span className="is-pulled-left">{time(trackPosition)}</span>
-          <span className="is-pulled-right">{time(trackDuration)}</span>
+          {trackDuration && <span className="is-pulled-left">{time(trackPosition)}</span>}
+          {trackDuration && <span className="is-pulled-right">{time(trackDuration)}</span>}
           <progress
             max={trackDuration}
             value={trackPosition}
