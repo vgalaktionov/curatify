@@ -36,7 +36,7 @@ const Menu = ({ isActive }: MenuProps) => {
 export default function Navbar() {
   const [showMenu, setShowMenu] = useState(false);
   return (
-    <nav className="navbar" onBlur={() => setShowMenu(false)} tabIndex={1}>
+    <nav className="navbar" tabIndex={1}>
       <div className="navbar-brand">
         <a href="/" className="navbar-item is-logo">
           <img src={logo} />
@@ -53,7 +53,7 @@ export default function Navbar() {
           <span aria-hidden="true" />
         </a>
       </div>
-      <Menu isActive={showMenu} />
+      <Menu isActive={showMenu} onBlur={() => setShowMenu(false)} />
     </nav>
   );
 }

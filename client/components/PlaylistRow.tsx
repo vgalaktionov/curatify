@@ -15,7 +15,7 @@ export default function PlaylistRow({ playlist }: PlaylistRowProps) {
       <td>
         <img src={minBy(playlist.images, "height").url} className="playlist-cover" />
       </td>
-      <td>{playlist.name}</td>
+      <td className="playlist-name">{playlist.name}</td>
       <td>
         <div className="select">
           <select
