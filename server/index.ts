@@ -5,11 +5,13 @@ import path from "path";
 import express from "express";
 import bodyParser from "body-parser";
 import cookieSession = require("cookie-session");
+import expressWinston from "express-winston";
 
 import auth from "./auth";
 import api from "./api";
 import { ingestAll } from "./tasks/ingest";
 import { analyzeAll } from "./tasks/analyze";
+import log from "./logger";
 
 const app = express();
 const host = process.env.HOST || "127.0.0.1";
@@ -24,6 +26,7 @@ async function start() {
       keys: [process.env.SECRET]
     })
   );
+  app.use(expressWinston.logger({ winstonInstance: log, expressFormat: true }));
 
   app.get("/login", (req, res) => {
     if (req.session.user) {
@@ -46,14 +49,18 @@ async function start() {
     }
   });
   app.listen(port);
-  console.info(`Server listening on http://${host}:${port}`);
+  log.info(`Server listening on http://${host}:${port}`);
 }
 
 async function allTasks() {
-  console.info("Running periodic tasks...");
-  await ingestAll();
-  await analyzeAll();
-  console.info("Periodic tasks completed.");
+  log.info("Running periodic tasks...");
+  try {
+    await ingestAll();
+    await analyzeAll();
+  } catch (error) {
+    log.error(error);
+  }
+  log.info("Periodic tasks completed.");
 }
 
 // Run the fetching tasks

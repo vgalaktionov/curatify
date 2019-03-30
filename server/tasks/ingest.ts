@@ -6,6 +6,7 @@ import { upsertArtistTracks, upsertArtists, allIds } from "../data/artists";
 import { updateUserInbox, enrichInbox } from "../data/inbox";
 import { Token, User, Track, Artist } from "../../types";
 import { uniqueBy, chunks, pick } from "../../lib/util";
+import log, { time } from "../logger";
 
 function expiring({ expiresAt }: Token): boolean {
   return Date.now() / 1000 > expiresAt - 60;
@@ -86,21 +87,30 @@ async function ingestTrackArtists(tracks: Track[]) {
 }
 
 export async function ingestForUser(user: User) {
-  console.info(`ingesting for user ${user.id}...`);
+  log.info(`ingesting for user ${user.id}...`);
   user = await updateUserToken(user);
   const client = new SpotifyUserClient(user.token);
 
+  let start = process.hrtime();
+  log.info(`ingesting playlists for user ${user.id}...`);
   await ingestUserPlaylists(client, user);
-  console.info(`ingested playlists for user ${user.id}...`);
+  time(`ingested playlists for user ${user.id}`, start);
 
+  start = process.hrtime();
+  log.info(`ingesting playlist tracks for user ${user.id}...`);
   await ingestUserPlaylistTracks(client, user);
-  console.info(`ingested playlist tracks for user ${user.id}...`);
+  time(`ingested playlist tracks for user ${user.id}...`, start);
 
+  start = process.hrtime();
+  log.info(`ingesting inbox for user ${user.id}...`);
   await updateUserInbox(user);
-  console.info(`updated inbox for user ${user.id}...`);
+  time(`updated inbox for user ${user.id}...`, start);
 }
 
 async function ingestArtistDetails(client: SpotifyClient) {
+  const start = process.hrtime();
+  log.info("Ingesting all artist details...");
+
   const ids = await allIds();
   await Promise.all(
     chunks(ids, 50).map(async chunk => {
@@ -108,9 +118,12 @@ async function ingestArtistDetails(client: SpotifyClient) {
       await upsertArtists(artists.map(a => pick(a, ["id", "name", "genres", "images"]) as Artist));
     })
   );
+  time("Finished ingesting all artist details", start);
 }
 
 export async function ingestAll() {
+  const start = process.hrtime();
+  log.info("Ingesting  for all users...");
   try {
     const users = await allUsers();
     await Promise.all(users.map(async u => ingestForUser(u)));
@@ -118,8 +131,13 @@ export async function ingestAll() {
     const token = await SpotifyClient.getToken();
     const genericClient = new SpotifyClient(token);
     await ingestArtistDetails(genericClient);
+
+    const start2 = process.hrtime();
+    log.info("Enriching inoxes...");
     await enrichInbox();
+    time("Finished for all users", start2);
   } catch (e) {
-    console.error(e);
+    log.error(e);
   }
+  time("Finished for all users", start);
 }

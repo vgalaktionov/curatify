@@ -7,12 +7,13 @@ import logo from "../static/logo_transparent.png";
 
 interface MenuProps {
   isActive: boolean;
+  onBlur: () => void;
 }
 
-const Menu = ({ isActive }: MenuProps) => {
+const Menu = ({ isActive, onBlur }: MenuProps) => {
   const user = useStore(state => state.user.me);
   return (
-    <div className={`navbar-menu ${isActive && "is-active"}`}>
+    <div className={`navbar-menu ${isActive && "is-active"}`} onBlur={onBlur}>
       <div className="navbar-start">
         <Link to="/curate" className="navbar-item" activeClassName="is-active">
           Curate
