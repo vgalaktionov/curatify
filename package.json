@@ -3,7 +3,7 @@
   "version": "3.0.0",
   "description": "Curatify is a better way to explore new music on Spotify.",
   "author": "Vadim",
-  "private": true,
+  "license": "GPLv3",
   "scripts": {
     "dev": "NODE_ENV=development concurrently 'npm run dev:backend' 'npm run dev:frontend'",
     "dev:backend": "nodemon -e ts --watch './server/**/*' --watch './lib/**/*' --watch './types/**/*' --watch './util/**/*' --ignore 'src/**/*.spec.ts' --exec 'npx tsc && node ./built/server/index.js'",

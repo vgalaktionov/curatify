@@ -1,22 +1,39 @@
-# curatify
+# Curatify
 
-> My fabulous Nuxt.js project
+> Better new music discovery through Spotify.
+
+Built with the following stack:
+
+- Spotify Web API/Playback SDK
+- Node
+- TypeScript
+- PostgreSQL (pg)
+- Express
+- Axios
+- React
+- easy-peasy
+- Bulma
+
+Deployed using:
+
+- Docker
+- Digital Ocean
+- Logz.io
 
 ## Build Setup
 
-``` bash
+```bash
 # install dependencies
-$ yarn install
+$ npm install
 
-# serve with hot reload at localhost:3000
-$ yarn run dev
+# migrate database
+$ npm run migrate
 
-# build for production and launch server
-$ yarn run build
-$ yarn start
+# serve with hot reload at localhost:5000
+$ npm run dev
 
-# generate static project
-$ yarn run generate
+# build for production and deploy
+$ npm run deploy
 ```
 
-For detailed explanation on how things work, checkout [Nuxt.js docs](https://nuxtjs.org).
+Curatify is running at [curatify.xyz](https://curatify.xyz).
