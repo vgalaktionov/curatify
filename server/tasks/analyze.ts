@@ -19,11 +19,12 @@ export async function analyzeAll() {
   const users = await allUsers();
   await Promise.all(
     users.map(async user => {
+      log.info(`Analyzing for user ${user.id}...`);
       await calculateTrackPlaylistMatches(user);
-      log.info(`Analyzed for user ${user.id}...`);
+      log.info(`Analyzed for user ${user.id}`);
     })
   );
-  time("Analyzing complete", start);
+  time("Analyzing for all users complete", start);
 }
 
 export async function updateAffinities() {

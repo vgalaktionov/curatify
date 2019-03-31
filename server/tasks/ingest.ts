@@ -87,24 +87,24 @@ async function ingestTrackArtists(tracks: Track[]) {
 }
 
 export async function ingestForUser(user: User) {
-  log.info(`ingesting for user ${user.id}...`);
+  log.info(`Ingesting for user ${user.id}...`);
   user = await updateUserToken(user);
   const client = new SpotifyUserClient(user.token);
 
   let start = process.hrtime();
-  log.info(`ingesting playlists for user ${user.id}...`);
+  log.info(`Ingesting playlists for user ${user.id}...`);
   await ingestUserPlaylists(client, user);
-  time(`ingested playlists for user ${user.id}`, start);
+  time(`Ingested playlists for user ${user.id}`, start);
 
   start = process.hrtime();
-  log.info(`ingesting playlist tracks for user ${user.id}...`);
+  log.info(`Ingesting playlist tracks for user ${user.id}...`);
   await ingestUserPlaylistTracks(client, user);
-  time(`ingested playlist tracks for user ${user.id}...`, start);
+  time(`Ingested playlist tracks for user ${user.id}`, start);
 
   start = process.hrtime();
-  log.info(`ingesting inbox for user ${user.id}...`);
+  log.info(`Updating inbox for user ${user.id}...`);
   await updateUserInbox(user);
-  time(`updated inbox for user ${user.id}...`, start);
+  time(`Updated inbox for user ${user.id}`, start);
 }
 
 async function ingestArtistDetails(client: SpotifyClient) {
@@ -118,7 +118,7 @@ async function ingestArtistDetails(client: SpotifyClient) {
       await upsertArtists(artists.map(a => pick(a, ["id", "name", "genres", "images"]) as Artist));
     })
   );
-  time("Finished ingesting all artist details", start);
+  time("Ingested all artist details", start);
 }
 
 export async function ingestAll() {
@@ -135,9 +135,9 @@ export async function ingestAll() {
     const start2 = process.hrtime();
     log.info("Enriching inoxes...");
     await enrichInbox();
-    time("Finished for all users", start2);
+    time("Enriched inboxes for all users", start2);
   } catch (e) {
     log.error(e);
   }
-  time("Finished for all users", start);
+  time("Ingested for all users", start);
 }

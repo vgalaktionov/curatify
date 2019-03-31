@@ -1,20 +1,16 @@
 import winston from "winston";
-import DailyRotateFile from "winston-daily-rotate-file";
+import LogzioWinstonTransport from "winston-logzio";
 
 let log: winston.Logger;
 
 if (process.env.NODE_ENV === "production") {
   log = winston.createLogger({
-    level: "info",
-    format: winston.format.simple(),
     transports: [
-      new DailyRotateFile({
-        filename: "app-%DATE%.log",
-        datePattern: "YYYY-MM-DD-HH",
-        zippedArchive: true,
-        maxSize: "20m",
-        maxFiles: "14d"
-      })
+      new LogzioWinstonTransport({
+        name: "winston_logzio",
+        token: process.env.LOGZIO_TOKEN
+      }),
+      new winston.transports.Console()
     ]
   });
 } else {
@@ -27,7 +23,9 @@ if (process.env.NODE_ENV === "production") {
 
 export function time(message: string, timer: [number, number]) {
   const [s, ms] = process.hrtime(timer);
-  log.info(`${message} in ${s}s ${ms}ms`);
+  log.info(`${message} in ${s}.${String(ms).substring(0, 3)}s.`);
 }
+
+log.info(`Logging has been setup for env ${process.env.NODE_ENV}`);
 
 export default log;
