@@ -6,9 +6,8 @@ let log: winston.Logger;
 if (process.env.NODE_ENV === "production") {
   log = winston.createLogger({
     level: "info",
-    format: winston.format.align(),
+    format: winston.format.simple(),
     transports: [
-      new winston.transports.Console(),
       new DailyRotateFile({
         filename: "app-%DATE%.log",
         datePattern: "YYYY-MM-DD-HH",

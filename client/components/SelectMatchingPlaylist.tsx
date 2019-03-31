@@ -20,7 +20,7 @@ export default ({ track }: SelectMatchingPlaylistProps) => {
             <select
               name="matches"
               className="is-small"
-              defaultValue={matchingPlaylist.id}
+              defaultValue={matchingPlaylist && matchingPlaylist.id}
               onChange={async e => {
                 await setMatchingPlaylist({
                   trackId: track.track_id,
