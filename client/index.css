@@ -39,19 +39,31 @@ nav:focus {
   font-size: 40pt;
   border-color: transparent;
   outline: none;
+  opacity: 0.8;
 }
 
 .playback:hover {
-  color: rgb(129, 135, 141);
+  opacity: 1;
+  cursor: pointer;
+}
+
+.playback:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+progress {
+  cursor: pointer;
 }
 
 .album-art {
-  min-height: 300px;
+  min-height: 380px;
 }
 
 .currently-playing {
-  height: 350px;
-  min-height: 350px;
+  height: 380px;
+  min-height: 380px;
+  max-width: 700px;
   margin-bottom: 2rem;
 }
 
