@@ -90,3 +90,25 @@ img.preloader {
   margin-top: auto;
   margin-bottom: auto;
 }
+
+.ticker {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  float: left;
+  transition: 0.5s ease-in;
+  width: 300px;
+}
+
+.ticker.name {
+  height: 2rem;
+}
+
+.ticker.artists {
+  height: 1.5rem;
+}
+
+.ticker:hover {
+  transition: 4s ease-in;
+  text-indent: -300px;
+}
