@@ -104,7 +104,7 @@ export default function Player() {
       <div className="columns playback-buttons is-vcentered has-text-centered">
         <PlaybackButton
           listener={dislikeTrack}
-          iconName={"fa-heart-broken"}
+          iconName={"fa-heart-broken has-text-info"}
           disabled={track.status === Status.Disliked}
         />
         <PlaybackButton listener={previousTrack} iconName={"fa-step-backward"} />
@@ -116,7 +116,7 @@ export default function Player() {
         <PlaybackButton listener={nextTrack} iconName={"fa-step-forward"} />
         <PlaybackButton
           listener={likeTrack}
-          iconName={"fa-heart"}
+          iconName={"fa-heart has-text-danger"}
           disabled={track.status === Status.Liked}
         />
       </div>

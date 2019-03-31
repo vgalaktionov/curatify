@@ -7,7 +7,7 @@ Built with the following stack:
 - Spotify Web API/Playback SDK
 - Node
 - TypeScript
-- PostgreSQL (pg)
+- PostgreSQL
 - Express
 - Axios
 - React

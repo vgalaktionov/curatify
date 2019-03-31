@@ -36,8 +36,8 @@ export default function InboxRow({ track }: inboxRowProps) {
     >
       <td>{track.name}</td>
       <td>
-        {track.status === "liked" && <Icon icon="fas fa-heart" />}
-        {track.status === "disliked" && <Icon icon="fas fa-heart-broken" />}
+        {track.status === "liked" && <Icon icon="fas fa-heart has-text-danger" />}
+        {track.status === "disliked" && <Icon icon="fas fa-heart-broken has-text-info" />}
       </td>
       <td>
         {thisTrack && (

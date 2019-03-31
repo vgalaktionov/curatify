@@ -20,7 +20,7 @@ export default function CurrentlyPlaying({ track }: CurrentlyPlayingProps) {
   return (
     <div className="column is-12 has-text-centered currently-playing">
       <img src={imageUrl} style={{ height: "280px" }} />
-      <h5 className="is-size-5 has-text-weight-semibold">{track.name}</h5>
+      <h5 className="is-size-5 has-text-weight-semibold track-name">{track.name}</h5>
       {track.artists && (
         <p className="has-text-weight-semibold">{track.artist_names.join(", ")} </p>
       )}

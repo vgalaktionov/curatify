@@ -78,15 +78,11 @@ img.playlist-cover {
   /* min-width: 500px; */
 }
 
-.table.is-scrollable tbody {
-  overflow-y: scroll;
-  width: auto;
-  position: absolute;
-  max-height: 20rem;
-  max-width: 300px;
+.track-name {
+  color: rgb(51, 193, 198);
 }
 
-img.play-spinner {
+.icon img.play-spinner {
   padding-top: 0.5rem;
 }
 
