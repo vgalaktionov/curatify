@@ -13,45 +13,6 @@ import { ingestAll } from "./tasks/ingest";
 import { analyzeAll } from "./tasks/analyze";
 import log from "./logger";
 
-const app = express();
-const host = process.env.HOST || "127.0.0.1";
-const port = process.env.PORT || 3000;
-
-async function start() {
-  app.use(bodyParser.json());
-  app.use(
-    cookieSession({
-      maxAge: 24 * 60 * 60 * 1000,
-      name: "session",
-      keys: [process.env.SECRET]
-    })
-  );
-  app.use(expressWinston.logger({ winstonInstance: log, expressFormat: true }));
-
-  app.get("/login", (req, res) => {
-    if (req.session.user) {
-      res.redirect("/");
-    } else {
-      res.sendFile(path.resolve("dist/login.html"));
-    }
-  });
-  app.use(express.static("dist"));
-  app.use("/auth", auth);
-  app.use("/api", api);
-  // app.use((req, res) => {
-  //   if (!req.path.includes("dist")) res.redirect("/");
-  // });
-  app.get("/*", (req, res) => {
-    if (!req.session.user) {
-      res.redirect("/login");
-    } else {
-      res.sendFile(path.resolve("dist/index.html"));
-    }
-  });
-  app.listen(port);
-  log.info(`Server listening on http://${host}:${port}`);
-}
-
 async function allTasks() {
   log.info("Running periodic tasks...");
   try {
@@ -67,4 +28,36 @@ async function allTasks() {
 setImmediate(allTasks);
 setInterval(allTasks, 1000 * 60 * 5);
 
-start();
+const host = process.env.HOST || "127.0.0.1";
+const port = process.env.PORT || 3000;
+
+express()
+  .use(bodyParser.json())
+  .use(
+    cookieSession({
+      maxAge: 24 * 60 * 60 * 1000,
+      name: "session",
+      keys: [process.env.SECRET]
+    })
+  )
+  .use(expressWinston.logger({ winstonInstance: log, expressFormat: true }))
+  .get("/login", (req, res) => {
+    if (req.session.user) {
+      res.redirect("/");
+    } else {
+      res.sendFile(path.resolve("dist/login.html"));
+    }
+  })
+  .use(express.static("dist"))
+  .use("/auth", auth)
+  .use("/api", api)
+  .get("/*", (req, res) => {
+    if (!req.session.user) {
+      res.redirect("/login");
+    } else {
+      res.sendFile(path.resolve("dist/index.html"));
+    }
+  })
+  .listen(port);
+
+log.info(`Server listening on http://${host}:${port}`);
