@@ -34,12 +34,12 @@ nav:focus {
   max-height: 100px;
 }
 
-
 .playback {
   font-size: 40pt;
   border-color: transparent;
   outline: none;
   opacity: 0.8;
+  background-color: transparent;
 }
 
 .playback:hover {
