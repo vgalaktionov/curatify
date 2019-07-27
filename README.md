@@ -2,6 +2,8 @@
 
 > Better new music discovery through Spotify.
 
+Find the initial prototype in this [repo](https://github.com/vgalaktionov/curatify-clj).
+
 Built with the following stack:
 
 - Spotify Web API/Playback SDK
